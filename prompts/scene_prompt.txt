@@ -25,7 +25,10 @@ GENERATION RULES
 4. Set isInterior appropriately. A tavern scene is interior; a forest clearing is exterior. This affects how the Game Master describes the space.
 
 5. Introduce 1-2 NPCs if appropriate for the scene. Each NPC should have:
+   - A unique id (string)
    - A Portuguese name
+   - A race (e.g. Humano, Elfo, Anão, Orc, Halfling)
+   - Life: currentPercent, maxPercent, state (alive/dead/unconscious)
    - A brief visible description (what the characters see when they look at them)
    - A role or reason for being in the scene (innkeeper, mysterious traveler, guard, wounded scout)
    - A hook — something that invites interaction (they have information, they need help, they are hiding something, they recognize a character)
@@ -47,7 +50,7 @@ GENERATION RULES
 
 8. Include available items that logically belong in the scene. A tavern might have mugs, a ledger, a fire poker. A forest might have herbs, a fallen branch, a hunter's trap. Use proper item schema fields and write names and descriptions in Portuguese.
 
-9. Include available NPCs that are present in the scene. Reference them by name and role. Do not duplicate — each NPC appears once.
+9. Include available NPCs that are present in the scene. Reference them by name and role. Each NPC MUST have id, race, and life fields. Do not duplicate — each NPC appears once.
 
 10. Set scene context — a short Portuguese text that summarizes the current situation for the Game Master's reference. This context is NOT shown to players directly but helps the GM maintain consistency as the scene evolves.
 
@@ -95,7 +98,10 @@ Example structure:
   "context": "Portuguese context summary for GM reference — not shown to players",
   "availableNPCs": [
     {
+      "id": "string",
       "name": "Portuguese NPC name",
+      "race": "Portuguese (e.g. Humano, Elfo, Anão, Orc, Halfling)",
+      "life": { "currentPercent": 100, "maxPercent": 100, "state": "alive" },
       "role": "Portuguese role description",
       "visibleDescription": "Portuguese description of what characters see",
       "hook": "Portuguese hint at why interacting with this NPC matters"

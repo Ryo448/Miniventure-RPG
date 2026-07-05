@@ -20,7 +20,7 @@ GENERATION RULES
 8. Trade customs — merchant regulation, tariffs, dispute resolution, smuggler consequences.
 9. Legal systems and crime consequences for 2+ kingdoms (one draconian, one restorative/corrupt). Define consequences for thieves, murderers, smugglers, trespassers.
 10. Create 3+ hidden secrets/mysteries (lost civilization, cursed bloodline, forbidden spell, magical anomaly, court traitor, expiring pact). Document truth, keep hidden from players.
-11. Create 4+ major NPCs: Portuguese name, role, personality, secret motivations, connections to other NPCs/factions. At least one potential ally, one potential opponent.
+11. Create 4+ major NPCs: Portuguese name, race, role, personality, secret motivations, connections to other NPCs/factions. At least one potential ally, one potential opponent. Each major NPC should have a race (e.g. Humano, Elfo, Anão, Orc, Halfling).
 12. Design 3+ story arcs — non-linear, players may encounter hooks from multiple starting points, none mandatory. Each: Portuguese title, summary, key NPCs, climax, success/failure consequences.
 13. Include natural features: mountains, rivers, forests, deserts, seas, underground. Each: Portuguese description + narrative point (dangerous pass, hidden temple, monster territory, sacred grove).
 14. Define 2+ current world events happening independently of players (famine, succession crisis, monster migration, magical storm season). Provide urgency and context.

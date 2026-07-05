@@ -528,6 +528,18 @@ def _generate_initial_scene_worker(task_id, adventure_code):
             scene_data.setdefault('sceneLog', [])
             scene_data.setdefault('availableEnemies', [])
 
+            for npc in scene_data.get('availableNPCs', []):
+                if not npc.get('id'):
+                    npc['id'] = uuid.uuid4().hex[:8].upper()
+                if not npc.get('race'):
+                    npc['race'] = 'Humano'
+                if not npc.get('life'):
+                    npc['life'] = {'currentPercent': 100, 'maxPercent': 100, 'state': 'alive'}
+                elif isinstance(npc.get('life'), dict):
+                    npc['life'].setdefault('currentPercent', 100)
+                    npc['life'].setdefault('maxPercent', 100)
+                    npc['life'].setdefault('state', 'alive')
+
             if not scene_data.get('currentContext'):
                 scene_data['currentContext'] = scene_data.get('mainDescription', '')
 
