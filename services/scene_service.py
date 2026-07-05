@@ -38,7 +38,8 @@ def update_scene_context(adventure_code, scene_id, context_patch, append=True):
         return None
 
     if append:
-        scene['currentContext'] = scene.get('currentContext', '') + '\n' + context_patch
+        current = scene.get('currentContext', '').rstrip()
+        scene['currentContext'] = (current + '\n\n' + context_patch) if current else context_patch
     else:
         scene['currentContext'] = context_patch
 
