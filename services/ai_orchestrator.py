@@ -587,7 +587,10 @@ def _resolve_bot_action_worker(task_id, adventure_code, bot_code):
             action_text = f'{bot.get("name", "Bot")} age de acordo com sua personalidade.'
 
         result = _process_ai_action(adventure_code, bot_code, action_text, task_id)
-        _update_task(task_id, 'completed', result=result)
+        if result.get('ambiguous'):
+            _update_task(task_id, 'failed', error=result.get('narration', 'Bot gerou resposta sem uma ação clara.'), result={**result, 'retryable': True, 'botCode': bot_code, 'botName': bot.get('name', 'Bot')})
+        else:
+            _update_task(task_id, 'completed', result=result)
         _emit_state_update(adventure_code)
     except Exception as e:
         _update_task(task_id, 'failed', error=str(e))
@@ -631,7 +634,11 @@ def _resolve_action_worker(task_id, adventure_code, character_code, action):
     _update_task(task_id, 'running')
     try:
         result = _process_ai_action(adventure_code, character_code, action, task_id)
-        _update_task(task_id, 'completed', result=result)
+        if result.get('ambiguous'):
+            char = file_storage.get_adventure_character(adventure_code, character_code)
+            _update_task(task_id, 'failed', error=result.get('narration', 'Ação ambígua.'), result={**result, 'retryable': True, 'characterCode': character_code, 'characterName': char.get('name') if char else character_code})
+        else:
+            _update_task(task_id, 'completed', result=result)
         _emit_state_update(adventure_code)
     except Exception as e:
         _update_task(task_id, 'failed', error=str(e))
@@ -651,7 +658,7 @@ def _emit_state_update(adventure_code):
 
 def _process_ai_action(adventure_code, character_code, action, task_id, depth=0, max_depth=5):
     if depth >= max_depth:
-        return {'narration': 'A ação não pôde ser processada completamente.', 'commands': [], 'turnResult': {'endTurn': True, 'nextCharacterCode': None}}
+        return {'narration': 'A ação não pôde ser processada completamente.', 'commands': [], 'turnResult': {'endTurn': True, 'nextCharacterCode': None}, 'ambiguous': True}
 
     adventure = file_storage.get_adventure(adventure_code)
     char = file_storage.get_adventure_character(adventure_code, character_code)
@@ -697,11 +704,11 @@ def _process_ai_action(adventure_code, character_code, action, task_id, depth=0,
 
     content, error = ai_client.call_ai(messages, adventure_code, max_tokens=1500)
     if error:
-        return {'narration': f'Erro ao processar ação: {error}', 'commands': [], 'turnResult': {'endTurn': True, 'nextCharacterCode': None}}
+        return {'narration': f'Erro ao processar ação: {error}', 'commands': [], 'turnResult': {'endTurn': True, 'nextCharacterCode': None}, 'ambiguous': True}
 
     ai_response = ai_client.parse_ai_json(content)
     if not ai_response:
-        return {'narration': 'A ação não produziu resultados claros.', 'commands': [], 'turnResult': {'endTurn': True, 'nextCharacterCode': None}}
+        return {'narration': 'A ação não produziu resultados claros.', 'commands': [], 'turnResult': {'endTurn': True, 'nextCharacterCode': None}, 'ambiguous': True}
 
     is_valid, errors = validation_service.validate_ai_response(ai_response)
     if not is_valid:

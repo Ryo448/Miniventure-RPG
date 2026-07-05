@@ -70,10 +70,73 @@ const Game = {
             }
         } else if (data.status === 'failed') {
             this.currentTaskId = null;
-            this.setActionInProgress(false);
             const submitBtn = document.getElementById('action-submit-btn');
             if (submitBtn) submitBtn.disabled = false;
-            this._showActionError(data.error || 'Erro ao processar ação.');
+            const result = data.result || {};
+            if (result.retryable && (result.botCode || result.characterCode)) {
+                this.setBotActionInProgress(false);
+                this._showRetryableError(data.error || 'Erro ao processar ação.', result);
+            } else {
+                this.setActionInProgress(false);
+                this._showActionError(data.error || 'Erro ao processar ação.');
+            }
+        }
+    },
+
+    _showRetryableError(message, info) {
+        const narrationEl = document.getElementById('scene-narration');
+        if (!narrationEl) return;
+        const existing = document.getElementById('retry-action-box');
+        if (existing) existing.remove();
+        const isBot = !!info.botCode;
+        const charCode = info.botCode || info.characterCode;
+        const charName = info.botName || info.characterName || charCode;
+        const box = document.createElement('div');
+        box.id = 'retry-action-box';
+        box.style.cssText = 'margin-top:12px; padding:12px; border:1px solid var(--accent-danger); border-radius:8px; background:rgba(139,26,26,0.15);';
+        const msg = document.createElement('p');
+        msg.style.cssText = 'color:var(--accent-danger); margin:0 0 10px 0;';
+        msg.textContent = (isBot ? `${charName}: ` : '') + message;
+        box.appendChild(msg);
+        const retryBtn = document.createElement('button');
+        retryBtn.className = 'btn btn-primary';
+        retryBtn.textContent = isBot ? 'Tentar novamente' : 'Reenviar ação';
+        retryBtn.style.marginRight = '8px';
+        retryBtn.onclick = () => {
+            box.remove();
+            if (isBot) {
+                this.maybeTriggerBotAction(charCode);
+            } else {
+                this.setActionInProgress(false);
+                this.submitAction(info.lastAction || 'age de acordo com sua personalidade');
+            }
+        };
+        const skipBtn = document.createElement('button');
+        skipBtn.className = 'btn';
+        skipBtn.textContent = 'Pular turno';
+        skipBtn.style.display = this.isSpectator ? 'none' : '';
+        skipBtn.onclick = () => {
+            box.remove();
+            this.setBotActionInProgress(true, 'Pulando turno...');
+            API.passTurn(this.adventureId, charCode).then(() => {
+                this.setBotActionInProgress(false);
+            }).catch((err) => {
+                this._showActionError(err.message || 'Erro ao pular turno.');
+                this.setBotActionInProgress(false);
+            });
+        };
+        box.appendChild(retryBtn);
+        box.appendChild(skipBtn);
+        narrationEl.appendChild(box);
+        narrationEl.scrollTop = narrationEl.scrollHeight;
+    },
+
+    setBotActionInProgress(inProgress, message) {
+        this.actionInProgress = inProgress;
+        const statusEl = document.getElementById('action-status');
+        if (statusEl) {
+            statusEl.textContent = inProgress ? (message || 'Processando ação...') : '';
+            statusEl.style.display = inProgress ? 'block' : 'none';
         }
     },
 
