@@ -752,11 +752,95 @@ def _process_ai_action(adventure_code, character_code, action, task_id, depth=0,
         c.get('command', {}).get('type') == 'APPLY_DAMAGE' and c.get('command', {}).get('characterCode') == character_code
         for c in applied_commands if c.get('applied')
     )
+    item_already_added = any(
+        c.get('command', {}).get('type') == 'ADD_ITEM_TO_CHARACTER' and c.get('command', {}).get('characterCode') == character_code
+        for c in applied_commands if c.get('applied')
+    )
+    enemy_already_created = any(
+        c.get('command', {}).get('type') == 'CREATE_ENEMY'
+        for c in applied_commands if c.get('applied')
+    )
+
+    action_text = action if isinstance(action, str) else (action.get('description', '') if isinstance(action, dict) else '')
+    combined_text = (action_text + ' ' + narration).lower()
+
+    if not item_already_added and char:
+        pickup_kw = ['pegou', 'pega', 'apanhou', 'coletou', 'pegar', 'recolheu', 'recolhe', 'agarrou', 'encontrou um', 'encontrou uma']
+        if any(kw in combined_text for kw in pickup_kw):
+            import re
+            item_patterns = [
+                r'(?:peg(?:ou|a|ar)|apanhou|coletou|recolhe(?:u|)|agarrou)\s+(?:um|uma|o|a)\s+([a-zà-ú]+)',
+                r'(?:encontrou|achou)\s+(?:um|uma|o|a)\s+([a-zà-ú]+)'
+            ]
+            item_name = None
+            for pat in item_patterns:
+                m = re.search(pat, combined_text)
+                if m:
+                    item_name = m.group(1)
+                    break
+            if item_name:
+                fallback_item = {
+                    'id': uuid.uuid4().hex[:8].upper(),
+                    'name': item_name.capitalize(),
+                    'description': f'Um(a) {item_name} encontrado(a) na cena.',
+                    'type': 'misc',
+                    'uses': 1,
+                    'damage': 0,
+                    'healingPercent': 0
+                }
+                fallback_cmd = {'type': 'ADD_ITEM_TO_CHARACTER', 'characterCode': character_code, 'item': fallback_item}
+                result = _apply_command(adventure_code, fallback_cmd)
+                applied_commands.append({'command': fallback_cmd, 'applied': result.get('success', False), 'result': result, 'fallback': True})
+                if result.get('success'):
+                    file_storage.append_log(adventure_code, 'game', f'Fallback ADD_ITEM_TO_CHARACTER injetado para {character_code}: {item_name} (IA não emitiu comando).')
+
+    if not enemy_already_created:
+        enemy_kw = ['goblin', 'orc', 'bandido', 'esqueleto', 'zumbi', 'lobisomem', 'troll', 'ogro', 'dragão', 'criatura', 'monstro', 'inimigo', 'assaltante']
+        if any(kw in combined_text for kw in enemy_kw):
+            import re
+            m = re.search(r'(?:um|uma|o|a)\s+([a-zà-ú]+)', combined_text)
+            enemy_name = m.group(1) if m else 'Criatura hostil'
+            fallback_enemy = {
+                'name': enemy_name.capitalize(),
+                'description': f'Um(a) {enemy_name} hostil apareceu na cena.',
+                'life': {'currentPercent': 100, 'maxPercent': 100, 'state': 'alive'},
+                'attack': 5,
+                'defense': 2,
+                'attributes': {},
+                'loot': {'coins': 0, 'items': []},
+                'isBoss': False
+            }
+            fallback_cmd = {'type': 'CREATE_ENEMY', 'enemyData': fallback_enemy}
+            result = _apply_command(adventure_code, fallback_cmd)
+            applied_commands.append({'command': fallback_cmd, 'applied': bool(result.get('enemyCode')), 'result': result, 'fallback': True})
+            if result.get('enemyCode'):
+                file_storage.append_log(adventure_code, 'game', f'Fallback CREATE_ENEMY injetado: {enemy_name} (IA não emitiu comando).')
+
+    npc_already_added = any(
+        c.get('command', {}).get('type') == 'ADD_NPC_TO_SCENE'
+        for c in applied_commands if c.get('applied')
+    )
+    if not npc_already_added:
+        npc_appear_kw = ['apareceu', 'aproxima', 'chega', 'chegou', 'surge', 'surgiu', 'aproximou']
+        if any(kw in combined_text for kw in npc_appear_kw):
+            import re
+            m = re.search(r'([A-ZÀ-Ú][a-zà-ú]{2,})', action_text + ' ' + narration)
+            if m:
+                npc_name = m.group(1)
+                fallback_npc = {
+                    'id': uuid.uuid4().hex[:8].upper(),
+                    'name': npc_name,
+                    'description': f'Um NPC chamado {npc_name} que apareceu na cena.',
+                    'role': 'NPC'
+                }
+                fallback_cmd = {'type': 'ADD_NPC_TO_SCENE', 'npc': fallback_npc}
+                result = _apply_command(adventure_code, fallback_cmd)
+                applied_commands.append({'command': fallback_cmd, 'applied': bool(result.get('npcId')), 'result': result, 'fallback': True})
+                if result.get('npcId'):
+                    file_storage.append_log(adventure_code, 'game', f'Fallback ADD_NPC_TO_SCENE injetado: {npc_name} (IA não emitiu comando).')
 
     if not damage_already_applied and char and char.get('life', {}).get('state') != 'dead':
-        action_text = action if isinstance(action, str) else (action.get('description', '') if isinstance(action, dict) else '')
         harm_keywords = ['enfiou', 'cortou', 'faca', 'esfaqueou', 'apunhalou', 'feriu', 'machucou', 'queimou', 'caiu', 'penhasco', 'veneno', 'envenenou', 'sangrou', 'auto-mutil', 'mordeu', 'triturou', 'esmagou', 'dano', 'ferimento']
-        combined_text = (action_text + ' ' + narration).lower()
         if any(kw in combined_text for kw in harm_keywords):
             severe_kw = [('morte', 'penhasco', 'suicid', 'saltou do'), ('faca', 'esfaque', 'apunhal', 'enfiou'), ('cortou', 'feriu', 'machucou', 'queimou', 'mordeu'), ('veneno', 'envenen')]
             amount = 0
@@ -885,6 +969,29 @@ def _apply_command(adventure_code, cmd):
         append = cmd.get('append', True)
         result = scene_service.update_scene_context(adventure_code, scene_id, patch, append)
         return {'success': result is not None}
+
+    elif cmd_type == 'ADD_NPC_TO_SCENE':
+        npc = cmd.get('npc', {})
+        if not npc.get('id'):
+            import uuid
+            npc['id'] = uuid.uuid4().hex[:8].upper()
+        scene = scene_service.get_current_scene(adventure_code)
+        if scene:
+            scene_service.add_npc_to_scene(adventure_code, scene['sceneId'], npc)
+            return {'npcId': npc.get('id'), 'sceneId': scene['sceneId']}
+        return {'success': False}
+
+    elif cmd_type == 'ADD_ITEM_TO_SCENE':
+        item = cmd.get('item', {})
+        if not item.get('id'):
+            import uuid
+            item['id'] = uuid.uuid4().hex[:8].upper()
+        scene = scene_service.get_current_scene(adventure_code)
+        if scene:
+            scene.setdefault('availableItems', []).append(item)
+            file_storage.save_scene(adventure_code, scene)
+            return {'itemId': item.get('id'), 'sceneId': scene['sceneId']}
+        return {'success': False}
 
     elif cmd_type == 'CREATE_SCENE':
         title = cmd.get('title', 'Nova Cena')

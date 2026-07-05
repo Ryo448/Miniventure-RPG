@@ -5,8 +5,11 @@ VALID_COMMAND_TYPES = [
     'REMOVE_COINS',
     'TRANSFER_COINS',
     'UPDATE_SCENE_CONTEXT',
+    'ADD_NPC_TO_SCENE',
+    'ADD_ITEM_TO_SCENE',
     'CREATE_SCENE',
     'CREATE_ENEMY',
+    'REMOVE_ENEMY',
     'APPLY_DAMAGE',
     'APPLY_HEALING',
     'REGISTER_CRIME',
@@ -139,7 +142,8 @@ def validate_command(command, adventure_data, characters_data):
         if not ability or not ability.get('id'):
             errors.append('Habilidade deve conter um ID.')
 
-    elif cmd_type in ('CREATE_SCENE', 'CREATE_ENEMY', 'UPDATE_SCENE_CONTEXT',
+    elif cmd_type in ('CREATE_SCENE', 'CREATE_ENEMY', 'REMOVE_ENEMY', 'UPDATE_SCENE_CONTEXT',
+                       'ADD_NPC_TO_SCENE', 'ADD_ITEM_TO_SCENE',
                        'UPDATE_GLOBAL_INFO', 'REGISTER_CRIME', 'TRANSITION_SCENE',
                        'ADD_TEMPORARY_EFFECT', 'UPDATE_ARMOR'):
         pass
