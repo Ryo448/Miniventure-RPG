@@ -593,49 +593,13 @@ const Game = {
         const narrationEl = document.getElementById('scene-narration');
         if (!narrationEl) return;
 
-        const entry = document.createElement('div');
-        entry.className = 'action-log-entry';
-        entry.style.borderTop = '1px solid var(--border-gold)';
-        entry.style.borderLeft = '2px solid var(--gold)';
-        entry.style.marginTop = '14px';
-        entry.style.paddingTop = '12px';
-        entry.style.paddingLeft = '10px';
-
         const actionLabel = result.actionLabel || this._pendingActionLabel || null;
         const charName = result.characterName || this._pendingActionCharName || null;
         this._pendingActionLabel = null;
         this._pendingActionCharName = null;
 
-        if (actionLabel && charName) {
-            const actionEl = document.createElement('div');
-            actionEl.className = 'action-log-action';
-            actionEl.innerHTML = '<span class="action-log-arrow">\u25B8</span> <span class="action-log-name"></span> <em></em>';
-            actionEl.querySelector('.action-log-name').textContent = charName + ':';
-            actionEl.querySelector('em').textContent = actionLabel;
-            entry.appendChild(actionEl);
-        } else if (actionLabel) {
-            const actionEl = document.createElement('div');
-            actionEl.className = 'action-log-action';
-            actionEl.innerHTML = '<span class="action-log-arrow">\u25B8</span> <em></em>';
-            actionEl.querySelector('em').textContent = actionLabel;
-            entry.appendChild(actionEl);
-        }
-
-        const narration = result.narration || result.message || '';
-        if (narration) {
-            const p = document.createElement('div');
-            p.className = 'narration-paragraph';
-            p.innerHTML = this._renderMarkdown(narration);
-            entry.appendChild(p);
-        }
-
-        const t = document.createElement('div');
-        t.className = 'action-log-timestamp';
-        t.textContent = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-        entry.appendChild(t);
-
-        narrationEl.appendChild(entry);
-        narrationEl.scrollTop = narrationEl.scrollHeight;
+        this.lastSceneDescription = null;
+        this.loadInitialScene();
     },
 
     _renderMarkdown(text) {
