@@ -194,7 +194,13 @@ const Game = {
             npcSection.style.display = this.npcs.length > 0 ? 'block' : 'none';
             npcsEl.innerHTML = this.npcs.map((n) => {
                 const key = n.code || n.id || n.name;
-                return `<div class="party-member" data-char-code="${key}" data-entity-type="npc"><span class="party-status-dot" style="background:var(--gold);"></span><span>${n.name}</span><span class="life-tooltip">NPC — sem vida</span></div>`;
+                const life = n.life || {};
+                const cur = (typeof life === 'object' ? life.currentPercent : life) ?? '?';
+                const max = (typeof life === 'object' ? life.maxPercent : 100) ?? '?';
+                const state = (typeof life === 'object' ? life.state : 'alive') ?? 'alive';
+                const statePT = { alive: 'Vivo', dead: 'Morto', unconscious: 'Inconsciente' }[state] || state;
+                const raceTag = n.race ? ` <span style="color:var(--text-muted); font-size:0.78rem;">${n.race}</span>` : '';
+                return `<div class="party-member" data-char-code="${key}" data-entity-type="npc"><span class="party-status-dot" style="background:var(--gold);"></span><span>${n.name}</span>${raceTag}<span class="life-tooltip">Vida: ${cur}/${max} (${statePT})</span></div>`;
             }).join('');
         }
         if (enemiesEl && scene.availableEnemies) {
@@ -845,15 +851,23 @@ const Game = {
     },
 
     renderNPCFicha(n) {
+        const life = n.life || {};
+        const lifePct = (typeof life === 'object' ? life.currentPercent : life) ?? '?';
+        const lifeMax = (typeof life === 'object' ? life.maxPercent : 100) ?? '?';
+        const lifeState = (typeof life === 'object' ? life.state : 'alive') ?? '?';
+        const statePT = { alive: 'Vivo', dead: 'Morto', unconscious: 'Inconsciente' };
         return `
             <div class="char-view-section">
                 <div class="char-view-section-title">Informações</div>
                 <div class="char-view-grid">
                     <div class="char-view-field"><span class="char-view-field-label">Nome</span><span class="char-view-field-value">${n.name || '—'}</span></div>
+                    <div class="char-view-field"><span class="char-view-field-label">Raça</span><span class="char-view-field-value">${n.race || '—'}</span></div>
                     <div class="char-view-field"><span class="char-view-field-label">Papel</span><span class="char-view-field-value">${n.role || '—'}</span></div>
+                    <div class="char-view-field"><span class="char-view-field-label">Vida</span><span class="char-view-field-value">${lifePct}/${lifeMax} (${statePT[lifeState] || lifeState})</span></div>
                 </div>
             </div>
             ${n.visibleDescription ? `<div class="char-view-section"><div class="char-view-section-title">Descrição Visível</div><p class="char-view-desc">${n.visibleDescription}</p></div>` : ''}
+            ${n.description ? `<div class="char-view-section"><div class="char-view-section-title">Descrição</div><p class="char-view-desc">${n.description}</p></div>` : ''}
             ${n.hook ? `<div class="char-view-section"><div class="char-view-section-title">Hook</div><p class="char-view-desc">${n.hook}</p></div>` : ''}
         `;
     },
