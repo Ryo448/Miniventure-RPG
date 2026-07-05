@@ -125,6 +125,39 @@ def start_adventure(adventure_code):
     return ad, None
 
 
+def retry_ai_stage(adventure_code, stage):
+    adventure = file_storage.get_adventure(adventure_code)
+    if not adventure:
+        return False, 'Aventura não encontrada.'
+
+    ai_prep = adventure.get('aiPreparation', {})
+    if stage not in ai_prep:
+        return False, 'Stage desconhecido.'
+
+    current = ai_prep.get(stage)
+    if current != 'failed':
+        return False, f'Stage {stage} não está em falha (atual: {current}).'
+
+    if stage == 'timeline':
+        file_storage.update_ai_preparation_stage(adventure_code, 'timeline', 'pending')
+        ai_orchestrator.generate_timeline_async(adventure_code)
+        return True, 'Retry da timeline iniciado.'
+
+    if stage == 'initialScene':
+        if ai_prep.get('timeline') != 'completed':
+            return False, 'Timeline precisa estar completa antes de gerar a cena inicial.'
+        if ai_prep.get('bots') not in ('completed', None):
+            return False, 'Bots precisam estar prontos antes de gerar a cena inicial.'
+        file_storage.update_ai_preparation_stage(adventure_code, 'initialScene', 'pending')
+        ai_orchestrator.generate_initial_scene_async(adventure_code)
+        return True, 'Retry da cena inicial iniciado.'
+
+    if stage == 'bots':
+        return False, 'Retry de bots não suportado. Recrie a aventura.'
+
+    return False, 'Stage não suportado para retry.'
+
+
 def join_adventure(adventure_code, character_code):
     adventure = file_storage.get_adventure(adventure_code)
     if not adventure:

@@ -287,6 +287,12 @@
         <div class="ai-progress-bar">
             <div class="ai-progress-fill" id="ai-progress-fill" style="width: 0%"></div>
         </div>
+        <div id="retry-section" style="display:none; margin-top:12px;">
+            <button class="btn btn-primary" id="retry-btn" onclick="retryFailedStages()" style="margin-top:8px;">
+                Tentar novamente (<span id="retry-stages">—</span>)
+            </button>
+            <div id="retry-error" class="error-msg" style="display:none; margin-top:8px;"></div>
+        </div>
     </div>
 
     <!-- Start Button -->
@@ -417,9 +423,10 @@
                 var done = 0;
                 var failed = false;
                 var nextStage = null;
+                var failedStages = [];
                 stages.forEach(function(s) {
                     if (aiPrep[s] === 'completed') done++;
-                    if (aiPrep[s] === 'failed') failed = true;
+                    if (aiPrep[s] === 'failed') { failed = true; failedStages.push(s); }
                     if (nextStage === null && aiPrep[s] !== 'completed' && aiPrep[s] !== 'failed') {
                         nextStage = s;
                     }
@@ -430,24 +437,35 @@
                 var text = document.getElementById('ai-status-text');
                 var spinner = document.getElementById('ai-spinner');
                 var fill = document.getElementById('ai-progress-fill');
+                var retrySection = document.getElementById('retry-section');
+                var retryStagesSpan = document.getElementById('retry-stages');
 
                 if (failed) {
-                    text.textContent = 'Erro na preparação. Tente recriar a aventura.';
+                    var failedLabels = { timeline: 'Timeline', bots: 'Bots', initialScene: 'Cena inicial' };
+                    var labelList = failedStages.map(function(s){ return failedLabels[s] || s; }).join(', ');
+                    text.textContent = 'Falha na preparação: ' + labelList + '.';
                     text.className = 'ai-status-text';
                     spinner.className = 'ai-spinner';
                     fill.style.width = '100%';
                     fill.style.background = 'linear-gradient(90deg, #8b1a1a, #cc3333)';
-                } else if (aiReady) {
-                    text.textContent = statuses.ready;
-                    text.className = 'ai-status-text done';
-                    spinner.className = 'ai-spinner done';
-                    fill.style.width = '100%';
+                    if (retrySection) {
+                        retrySection.style.display = 'block';
+                        if (retryStagesSpan) retryStagesSpan.textContent = labelList;
+                    }
                 } else {
-                    var label = nextStage ? (statuses[nextStage] || 'Preparando...') : 'Preparando...';
-                    text.textContent = label;
-                    text.className = 'ai-status-text';
-                    spinner.className = 'ai-spinner';
-                    fill.style.width = (done / stages.length * 100) + '%';
+                    if (retrySection) retrySection.style.display = 'none';
+                    if (aiReady) {
+                        text.textContent = statuses.ready;
+                        text.className = 'ai-status-text done';
+                        spinner.className = 'ai-spinner done';
+                        fill.style.width = '100%';
+                    } else {
+                        var label = nextStage ? (statuses[nextStage] || 'Preparando...') : 'Preparando...';
+                        text.textContent = label;
+                        text.className = 'ai-status-text';
+                        spinner.className = 'ai-spinner';
+                        fill.style.width = (done / stages.length * 100) + '%';
+                    }
                 }
 
                 var count = data.realPlayerCount !== undefined ? data.realPlayerCount : currentPlayers;
@@ -540,6 +558,49 @@
             .catch(function(){
                 errDiv.textContent = 'Erro ao iniciar a aventura. Tente novamente.';
                 errDiv.style.display = 'block';
+            });
+    }
+
+    function retryFailedStages() {
+        var errDiv = document.getElementById('retry-error');
+        if (errDiv) errDiv.style.display = 'none';
+        var btn = document.getElementById('retry-btn');
+        if (btn) btn.disabled = true;
+
+        fetch('/api/adventures/' + adventureCode + '/status')
+            .then(function(r){ return r.json(); })
+            .then(function(data) {
+                var aiPrep = data.aiPreparation || {};
+                var stagesMap = { timeline: 'timeline', initialScene: 'initialScene', bots: 'bots' };
+                var failedStages = Object.keys(aiPrep).filter(function(s){
+                    return aiPrep[s] === 'failed' && (s === 'timeline' || s === 'initialScene');
+                });
+                if (failedStages.length === 0) {
+                    if (errDiv) { errDiv.textContent = 'Nenhuma stage em falha.'; errDiv.style.display = 'block'; }
+                    if (btn) btn.disabled = false;
+                    return;
+                }
+                var sequence = Promise.resolve();
+                failedStages.forEach(function(stage) {
+                    sequence = sequence.then(function(){
+                        return fetch('/api/adventures/' + adventureCode + '/retry-ai', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ stage: stage })
+                        }).then(function(r){ return r.json(); });
+                    }).then(function(resp) {
+                        if (resp.error) throw new Error(resp.error);
+                    });
+                });
+                sequence.then(function() {
+                    setTimeout(updateAIStatus, 500);
+                }).catch(function(err) {
+                    if (errDiv) { errDiv.textContent = err.message || 'Erro ao retentar.'; errDiv.style.display = 'block'; }
+                    if (btn) btn.disabled = false;
+                });
+            })
+            .catch(function(){
+                if (btn) btn.disabled = false;
             });
     }
 

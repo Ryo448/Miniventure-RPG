@@ -92,6 +92,18 @@ def get_game_state(adventure_id):
     })
 
 
+@adventure_routes.route('/api/adventures/<adventure_id>/retry-ai', methods=['POST'])
+def retry_ai(adventure_id):
+    data = request.get_json() or {}
+    stage = data.get('stage')
+    if not stage:
+        return jsonify({'error': 'Stage é obrigatório.'}), 400
+    success, message = adventure_service.retry_ai_stage(adventure_id, stage)
+    if not success:
+        return jsonify({'error': message}), 400
+    return jsonify({'success': True, 'message': message})
+
+
 @adventure_routes.route('/api/adventures/<adventure_id>/ai-tasks', methods=['GET'])
 def get_ai_tasks(adventure_id):
     from services.ai_orchestrator import get_tasks_by_adventure
