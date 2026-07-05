@@ -1,4 +1,5 @@
 import json
+import re
 import uuid
 import threading
 import time
@@ -779,16 +780,33 @@ def _process_ai_action(adventure_code, character_code, action, task_id, depth=0,
     if not item_already_added and char:
         pickup_kw = ['pegou', 'pega', 'apanhou', 'coletou', 'pegar', 'recolheu', 'recolhe', 'agarrou', 'encontrou um', 'encontrou uma']
         if any(kw in combined_text for kw in pickup_kw):
-            import re
+            ITEM_STOPWORDS = {
+                'consegue', 'conseguir', 'consegue', 'conseguiu', 'pega', 'pegar', 'apanhar', 'coletar',
+                'recolher', 'agarrar', 'levar', 'carregar', 'segurar', 'guardar', 'colocar', 'deixar',
+                'olhar', 'ver', 'notar', 'observar', 'encontrar', 'achar', 'perceber', 'reparar',
+                'caminhar', 'andar', 'correr', 'pular', 'subir', 'descer', 'entrar', 'sair',
+                'abrindo', 'fechando', 'sorrindo', 'falando', 'dizendo', 'pensando', 'olhando',
+                'roupa', 'mão', 'mãos', 'cabeça', 'braço', 'perna', 'pé', 'olho',
+                'nada', 'tudo', 'algo', 'alguém', 'ninguém',
+                'caminho', 'lugar', 'vez', 'hora', 'momento', 'forma',
+                'grande', 'pequeno', 'novo', 'velho', 'bom', 'ruim',
+                'certa', 'certo', 'outra', 'outro', 'mesma', 'mesmo',
+                'tenta', 'tentar', 'começa', 'começar', 'continua', 'continuar',
+                'precisa', 'precisar', 'quer', 'querer', 'pode', 'poder',
+                'deve', 'devia', 'ser', 'estar', 'ter', 'haver', 'ir', 'vir',
+            }
             item_patterns = [
                 r'(?:peg(?:ou|a|ar)|apanhou|coletou|recolhe(?:u|)|agarrou)\s+(?:um|uma|o|a)\s+([a-zà-ú]+)',
                 r'(?:encontrou|achou)\s+(?:um|uma|o|a)\s+([a-zà-ú]+)'
             ]
             item_name = None
             for pat in item_patterns:
-                m = re.search(pat, combined_text)
-                if m:
-                    item_name = m.group(1)
+                for m in re.finditer(pat, combined_text):
+                    candidate = m.group(1)
+                    if candidate not in ITEM_STOPWORDS:
+                        item_name = candidate
+                        break
+                if item_name:
                     break
             if item_name:
                 fallback_item = {
@@ -807,14 +825,61 @@ def _process_ai_action(adventure_code, character_code, action, task_id, depth=0,
                     file_storage.append_log(adventure_code, 'game', f'Fallback ADD_ITEM_TO_CHARACTER injetado para {character_code}: {item_name} (IA não emitiu comando).')
 
     if not enemy_already_created:
-        enemy_kw = ['goblin', 'orc', 'bandido', 'esqueleto', 'zumbi', 'lobisomem', 'troll', 'ogro', 'dragão', 'criatura', 'monstro', 'inimigo', 'assaltante']
-        if any(kw in combined_text for kw in enemy_kw):
-            import re
-            m = re.search(r'(?:um|uma|o|a)\s+([a-zà-ú]+)', combined_text)
-            enemy_name = m.group(1) if m else 'Criatura hostil'
+        ENEMY_BESTIARY = {
+            'goblin': {'name': 'Goblin', 'description': 'Uma criatura pequena e verde, de olhos vermelhos e dentes afiados.'},
+            'orc': {'name': 'Orc', 'description': 'Um humanoide musculoso e brutal, armado para a batalha.'},
+            'bandido': {'name': 'Bandido', 'description': 'Um humano encapuzado que espreita por vítimas.'},
+            'bandidos': {'name': 'Bandidos', 'description': 'Um bando de humanos encapuzados que espreitam por vítimas.'},
+            'esqueleto': {'name': 'Esqueleto', 'description': 'Um morto-vivo surgido de um túmulo esquecido.'},
+            'zumbi': {'name': 'Zumbi', 'description': 'Um cadáver ambulante, carne em decomposição e olhos vazios.'},
+            'lobisomem': {'name': 'Lobisomem', 'description': 'Um homem-lobo musculoso, garras e presas prontas.'},
+            'troll': {'name': 'Troll', 'description': 'Uma criatura enorme e grotesca, regenerativa e faminta.'},
+            'ogro': {'name': 'Ogro', 'description': 'Um gigante bestial, bruto e cruel.'},
+            'dragão': {'name': 'Dragão', 'description': 'Uma fera escamosa de asas imensas e hálito flamejante.'},
+            'dragao': {'name': 'Dragão', 'description': 'Uma fera escamosa de asas imensas e hálito flamejante.'},
+            'bruxa': {'name': 'Bruxa', 'description': 'Uma conjuradora sombria, olhos malignos.'},
+            'demônio': {'name': 'Demônio', 'description': 'Uma entidade infernal, chamas e maldade.'},
+            'demonio': {'name': 'Demônio', 'description': 'Uma entidade infernal, chamas e maldade.'},
+            'fantasma': {'name': 'Fantasma', 'description': 'Uma aparição etérea, translúcida e aterrorizante.'},
+            'morto-vivo': {'name': 'Morto-Vivo', 'description': 'Uma criatura morta que anda novamente.'},
+            'slime': {'name': 'Slime', 'description': 'Uma massa gelatinosa que se arrasta devorado pela fome.'},
+            'aranha': {'name': 'Aranha Gigante', 'description': 'Uma aranha enorme, venenosa e silenciosa.'},
+            'lobo': {'name': 'Lobo', 'description': 'Um lobo faminto, dentes à mostra.'},
+            'urso': {'name': 'Urso', 'description': 'Um urso robusto, garras enormes.'},
+            'serpente': {'name': 'Serpente', 'description': 'Uma cobra longa e venenosa.'},
+            'cobra': {'name': 'Cobra', 'description': 'Uma serpente rastejante, veneno pronto.'},
+            'raptor': {'name': 'Raptor', 'description': 'Um lagarto predador, rápido e mortal.'},
+            'assaltante': {'name': 'Assaltante', 'description': 'Um humano armado que exige seus pertences.'},
+            'assassino': {'name': 'Assassino', 'description': 'Um matador silencioso empunhando lâminas.'},
+            'mercenário': {'name': 'Mercenário', 'description': 'Um soldado sem lealdade, sangue por moedas.'},
+            'saqueador': {'name': 'Saqueador', 'description': 'Um pillager que busca despojos por qualquer meio.'},
+            'necromante': {'name': 'Necromante', 'description': 'Um conjurador que comanda os mortos.'},
+            'cultista': {'name': 'Cultista', 'description': 'Um fanático encapuzado, servindo um poder sombrio.'},
+            'gigante': {'name': 'Gigante', 'description': 'Um colosso humanoide, brutal e implacável.'},
+            'harpia': {'name': 'Harpia', 'description': 'Uma mulher-ave que ataca do céu.'},
+            'quimera': {'name': 'Quimera', 'description': 'Uma besta com partes de vários animais.'},
+            'gárgula': {'name': 'Gárgula', 'description': 'Uma estátua de pedra que cobra vida.'},
+            'gargula': {'name': 'Gárgula', 'description': 'Uma estátua de pedra que cobra vida.'},
+            'duende': {'name': 'Duende', 'description': 'Uma criatura pequena e travessa.'},
+            'silvano': {'name': 'Silvano', 'description': 'Um habitante da floresta, selvagem e arisco.'},
+            'worg': {'name': 'Worg', 'description': 'Um lobo monstruoso, mounts dos goblins.'},
+            'kobold': {'name': 'Kobold', 'description': 'Um réptil humanóide pequeno, trapaceiro.'},
+        }
+
+        bestiary_match = None
+        bestiary_key = None
+        for key in ENEMY_BESTIARY:
+            if key in combined_text:
+                bestiary_match = ENEMY_BESTIARY[key]
+                bestiary_key = key
+                break
+
+        if bestiary_match:
+            enemy_name = bestiary_match['name']
+            description = bestiary_match['description']
             fallback_enemy = {
-                'name': enemy_name.capitalize(),
-                'description': f'Um(a) {enemy_name} hostil apareceu na cena.',
+                'name': enemy_name,
+                'description': description,
                 'life': {'currentPercent': 100, 'maxPercent': 100, 'state': 'alive'},
                 'attack': 5,
                 'defense': 2,
@@ -859,7 +924,6 @@ def _process_ai_action(adventure_code, character_code, action, task_id, depth=0,
     if not npc_already_added:
         npc_appear_kw = ['apareceu', 'aproxima', 'chega', 'chegou', 'surge', 'surgiu', 'aproximou']
         if any(kw in combined_text for kw in npc_appear_kw):
-            import re
             npc_name = None
             for m in re.finditer(r'([A-ZÀ-Ú][a-zà-ú]{2,})', action_text + ' ' + narration):
                 candidate = m.group(1)
@@ -891,7 +955,6 @@ def _process_ai_action(adventure_code, character_code, action, task_id, depth=0,
         if fresh_scene:
             death_kw = ['morreu', 'morta', 'morto', 'foi morto', 'foi morta', 'caiu morto', 'caiu morta', 'enguiçou', 'vitima']
             if any(kw in combined_text for kw in death_kw):
-                import re
                 m = re.search(r'([A-ZÀ-Ú][a-zà-ú]{2,})', action_text + ' ' + narration)
                 if m:
                     dead_name = m.group(1)
