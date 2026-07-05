@@ -832,13 +832,25 @@ def _process_ai_action(adventure_code, character_code, action, task_id, depth=0,
         c.get('command', {}).get('type') == 'ADD_NPC_TO_SCENE'
         for c in applied_commands if c.get('applied')
     )
+    existing_names = {c.get('name', '').lower() for c in (all_chars or []) if c.get('name')}
+    if char and char.get('name'):
+        existing_names.add(char['name'].lower())
+    if scene:
+        for n in scene.get('availableNPCs', []):
+            if n.get('name'):
+                existing_names.add(n['name'].lower())
     if not npc_already_added:
         npc_appear_kw = ['apareceu', 'aproxima', 'chega', 'chegou', 'surge', 'surgiu', 'aproximou']
         if any(kw in combined_text for kw in npc_appear_kw):
             import re
-            m = re.search(r'([A-ZÀ-Ú][a-zà-ú]{2,})', action_text + ' ' + narration)
-            if m:
-                npc_name = m.group(1)
+            npc_name = None
+            for m in re.finditer(r'([A-ZÀ-Ú][a-zà-ú]{2,})', action_text + ' ' + narration):
+                candidate = m.group(1)
+                if candidate.lower() in existing_names:
+                    continue
+                npc_name = candidate
+                break
+            if npc_name:
                 fallback_npc = {
                     'id': uuid.uuid4().hex[:8].upper(),
                     'name': npc_name,
