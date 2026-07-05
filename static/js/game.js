@@ -65,8 +65,8 @@ const Game = {
             const submitBtn = document.getElementById('action-submit-btn');
             if (submitBtn) submitBtn.disabled = false;
             if (data.result && data.result.narration) {
-                const narrationEl = document.getElementById('scene-narration');
-                this.typeText(narrationEl, data.result.narration);
+                this.lastSceneDescription = null;
+                this.loadInitialScene();
             }
         } else if (data.status === 'failed') {
             this.currentTaskId = null;
