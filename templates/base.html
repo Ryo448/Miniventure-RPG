@@ -215,60 +215,6 @@
             text-shadow: 0 0 12px rgba(201, 168, 76, 0.2);
         }
 
-        /* Settings modal */
-        .settings-modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0, 0, 0, 0.7);
-            z-index: 2000;
-            align-items: center;
-            justify-content: center;
-        }
-        .settings-modal-overlay.active { display: flex; }
-
-        .settings-modal {
-            background: linear-gradient(145deg, var(--bg-card) 0%, var(--bg-panel) 100%);
-            border: 2px solid var(--gold-dim);
-            border-radius: 12px;
-            padding: 32px;
-            width: 90%;
-            max-width: 520px;
-            box-shadow: 0 8px 40px var(--shadow-dark);
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-
-        .settings-modal h2 {
-            font-family: var(--font-title);
-            color: var(--gold);
-            margin-bottom: 20px;
-            font-size: 1.5rem;
-        }
-
-        .settings-modal .form-group { margin-bottom: 16px; }
-        .settings-modal .form-group small {
-            display: block;
-            color: var(--text-muted);
-            font-size: 0.8rem;
-            margin-top: 4px;
-        }
-
-        .settings-modal-actions {
-            display: flex;
-            gap: 12px;
-            justify-content: flex-end;
-            margin-top: 24px;
-        }
-
-        .settings-status {
-            font-size: 0.85rem;
-            margin-top: 12px;
-            min-height: 20px;
-        }
-        .settings-status.ok { color: var(--accent-green); }
-        .settings-status.err { color: #e05555; }
-
         .nav-icon-btn {
             background: none;
             border: 1px solid var(--border-gold);
@@ -292,132 +238,14 @@
         <a href="/" class="nav-brand">Miniventure RPG</a>
         <div class="nav-links">
             <a href="/">Início</a>
-            <button class="nav-icon-btn" onclick="openSettingsModal()" title="Configurações">⚙</button>
         </div>
     </nav>
-
-    <div class="settings-modal-overlay" id="settings-modal">
-        <div class="settings-modal">
-            <h2>Configurações da IA</h2>
-            <div class="form-group">
-                <label for="setting-api-url">Endpoint da API</label>
-                <input type="text" id="setting-api-url" placeholder="http://localhost:3123/v1/chat/completions">
-                <small>URL do endpoint compatível com OpenAI (v1/chat/completions).</small>
-            </div>
-            <div class="form-group">
-                <label for="setting-api-key">API Key</label>
-                <input type="password" id="setting-api-key" placeholder="Deixe vazio para manter a atual">
-                <small id="setting-api-key-hint"></small>
-            </div>
-            <div class="form-group">
-                <label for="setting-model">Modelo</label>
-                <input type="text" id="setting-model" placeholder="AgentBridge">
-            </div>
-            <div class="form-group">
-                <label for="setting-max-tokens">Max Tokens</label>
-                <input type="number" id="setting-max-tokens" min="100" max="32000" step="100">
-            </div>
-            <div class="form-group">
-                <label for="setting-temperature">Temperatura</label>
-                <input type="number" id="setting-temperature" min="0" max="2" step="0.1">
-            </div>
-            <div class="form-group">
-                <label for="setting-scene-size">Tamanho das Cenas</label>
-                <select id="setting-scene-size">
-                    <option value="small">Pequena (1 parágrafo)</option>
-                    <option value="medium">Média (2-3 parágrafos)</option>
-                    <option value="large">Grande (3-4 parágrafos)</option>
-                    <option value="unlimited">Sem limite (original)</option>
-                </select>
-                <small>Controla o tamanho da narrativa das cenas geradas pela IA.</small>
-            </div>
-            <div class="form-group">
-                <label for="setting-timeout">Tempo Limite (segundos)</label>
-                <input type="number" id="setting-timeout" min="30" max="600" step="10">
-                <small>Timeout para chamadas à IA. Padrão: 120s.</small>
-            </div>
-            <div class="form-group">
-                <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
-                    <input type="checkbox" id="setting-disable-thinking">
-                    Desativar Thinking do modelo
-                </label>
-                <small>Para modelos com reasoning (ex: nemotron, Qwen3). Ignorado se o modelo não suportar.</small>
-            </div>
-            <div class="settings-status" id="settings-status"></div>
-            <div class="settings-modal-actions">
-                <button class="btn" onclick="closeSettingsModal()">Cancelar</button>
-                <button class="btn btn-primary" id="settings-save-btn" onclick="saveSettings()">Salvar</button>
-            </div>
-        </div>
-    </div>
 
     <main>
         {% block content %}{% endblock %}
     </main>
 
     <script src="/static/js/api.js"></script>
-    <script>
-    function openSettingsModal() {
-        fetch('/api/settings').then(r => r.json()).then(cfg => {
-            document.getElementById('setting-api-url').value = cfg.AI_API_URL || '';
-            document.getElementById('setting-api-key').value = '';
-            document.getElementById('setting-api-key-hint').textContent = cfg.AI_API_KEY_MASKED ? ('Atual: ' + cfg.AI_API_KEY_MASKED) : '';
-            document.getElementById('setting-model').value = cfg.AI_MODEL || '';
-            document.getElementById('setting-max-tokens').value = cfg.AI_MAX_TOKENS || 2000;
-            document.getElementById('setting-temperature').value = cfg.AI_TEMPERATURE || 0.8;
-            document.getElementById('setting-scene-size').value = cfg.SCENE_SIZE || 'unlimited';
-            document.getElementById('setting-timeout').value = cfg.AI_TIMEOUT || 120;
-            document.getElementById('setting-disable-thinking').checked = cfg.AI_DISABLE_THINKING || false;
-            document.getElementById('settings-status').textContent = '';
-            document.getElementById('settings-status').className = 'settings-status';
-            document.getElementById('settings-modal').classList.add('active');
-        }).catch(() => {
-            document.getElementById('settings-modal').classList.add('active');
-        });
-    }
-
-    function closeSettingsModal() {
-        document.getElementById('settings-modal').classList.remove('active');
-    }
-
-    function saveSettings() {
-        const btn = document.getElementById('settings-save-btn');
-        const status = document.getElementById('settings-status');
-        btn.disabled = true;
-        status.textContent = 'Salvando...';
-        status.className = 'settings-status';
-
-        const body = {
-            apiUrl: document.getElementById('setting-api-url').value.trim(),
-            apiKey: document.getElementById('setting-api-key').value,
-            model: document.getElementById('setting-model').value.trim(),
-            maxTokens: parseInt(document.getElementById('setting-max-tokens').value) || 2000,
-            temperature: parseFloat(document.getElementById('setting-temperature').value) || 0.8,
-            sceneSize: document.getElementById('setting-scene-size').value,
-            aiTimeout: parseInt(document.getElementById('setting-timeout').value) || 120,
-            disableThinking: document.getElementById('setting-disable-thinking').checked
-        };
-
-        fetch('/api/settings', {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(body)
-        }).then(r => r.json()).then(() => {
-            status.textContent = 'Configurações salvas com sucesso!';
-            status.className = 'settings-status ok';
-            setTimeout(closeSettingsModal, 1200);
-        }).catch(err => {
-            status.textContent = 'Erro ao salvar: ' + (err.message || 'desconhecido');
-            status.className = 'settings-status err';
-        }).finally(() => {
-            btn.disabled = false;
-        });
-    }
-
-    document.getElementById('settings-modal').addEventListener('click', function(e) {
-        if (e.target === this) closeSettingsModal();
-    });
-    </script>
     {% block scripts %}{% endblock %}
 </body>
 </html>
