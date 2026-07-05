@@ -44,11 +44,12 @@ ADD_COINS { "characterCode": "string", "amount": number, "reason": "Portuguese" 
 REMOVE_COINS { "characterCode": "string", "amount": number, "reason": "Portuguese" }
 TRANSFER_COINS { "fromCharacterCode": "string", "toCharacterCode": "string", "amount": number, "reason": "Portuguese" }
 UPDATE_SCENE_CONTEXT { "sceneId": "string", "contextPatch": "Portuguese text describing what changed" }
-ADD_NPC_TO_SCENE { "npc": { "id": "string", "name": "Portuguese", "description": "Portuguese", "role": "Portuguese" } }
+ADD_NPC_TO_SCENE { "npc": { "id": "string", "name": "Portuguese", "description": "Portuguese", "role": "Portuguese", "race": "Portuguese (e.g. Humano, Elfo, Anão, Orc, Halfling)", "life": { "currentPercent": 100, "maxPercent": 100, "state": "alive" } } }
 ADD_ITEM_TO_SCENE { "item": { "id": "string", "name": "Portuguese", "description": "Portuguese", "type": "weapon|armor|consumable|key|misc" } }
 CREATE_SCENE { "title": "Portuguese", "mainDescription": "Portuguese vivid new scene description", "isInterior": boolean, "availableNPCs": [], "availableItems": [] }
 CREATE_ENEMY { "name": "Portuguese", "description": "Portuguese", "life": number, "maxLife": number, "attack": number, "defense": number, "attributes": {}, "loot": { "coins": number, "items": [] }, "isBoss": boolean, "enemyCode": "string" }
 REMOVE_ENEMY { "enemyCode": "string" }
+REMOVE_NPC { "npcId": "string" }
 APPLY_DAMAGE { "characterCode": "string", "amount": number, "source": "Portuguese", "type": "physical|magical|poison|fire|ice|lightning|necrotic" }
 APPLY_HEALING { "characterCode": "string", "amount": number, "source": "Portuguese" }
 REGISTER_CRIME { "crime": "Portuguese", "location": "Portuguese", "committedBy": "characterCode", "consequence": "Portuguese" }
@@ -112,6 +113,7 @@ COMBAT RULES
 10. Boss enemies: higher stats, multi-phase, isBoss: true.
 11. When all enemies defeated, narrate the aftermath — casualties, loot, environmental changes.
 12. NPC appearance: when a named NPC enters the current scene (a merchant arriving, a guard walking up, a stranger approaching), emit ADD_NPC_TO_SCENE so the NPC is registered in the scene. Do not rely on narration alone.
+13. NPC life: every NPC has race + life. When a NPC dies (life reaches 0 or narrative confirms death), emit REMOVE_NPC with its npcId so it is removed from the scene. Never narrate an NPC's death without emitting REMOVE_NPC.
 
 ========================================
 COIN RULES

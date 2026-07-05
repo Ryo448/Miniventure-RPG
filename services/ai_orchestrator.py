@@ -831,13 +831,36 @@ def _process_ai_action(adventure_code, character_code, action, task_id, depth=0,
                     'id': uuid.uuid4().hex[:8].upper(),
                     'name': npc_name,
                     'description': f'Um NPC chamado {npc_name} que apareceu na cena.',
-                    'role': 'NPC'
+                    'role': 'NPC',
+                    'race': 'Humano',
+                    'life': {'currentPercent': 100, 'maxPercent': 100, 'state': 'alive'}
                 }
                 fallback_cmd = {'type': 'ADD_NPC_TO_SCENE', 'npc': fallback_npc}
                 result = _apply_command(adventure_code, fallback_cmd)
                 applied_commands.append({'command': fallback_cmd, 'applied': bool(result.get('npcId')), 'result': result, 'fallback': True})
                 if result.get('npcId'):
                     file_storage.append_log(adventure_code, 'game', f'Fallback ADD_NPC_TO_SCENE injetado: {npc_name} (IA não emitiu comando).')
+
+    npc_remove_already = any(
+        c.get('command', {}).get('type') == 'REMOVE_NPC'
+        for c in applied_commands if c.get('applied')
+    )
+    if not npc_remove_already:
+        fresh_scene = scene_service.get_current_scene(adventure_code)
+        if fresh_scene:
+            death_kw = ['morreu', 'morta', 'morto', 'foi morto', 'foi morta', 'caiu morto', 'caiu morta', 'enguiçou', 'vitima']
+            if any(kw in combined_text for kw in death_kw):
+                import re
+                m = re.search(r'([A-ZÀ-Ú][a-zà-ú]{2,})', action_text + ' ' + narration)
+                if m:
+                    dead_name = m.group(1)
+                    for n in fresh_scene.get('availableNPCs', []):
+                        if n.get('name', '').lower().startswith(dead_name.lower()) or dead_name.lower() in n.get('name', '').lower():
+                            fallback_cmd = {'type': 'REMOVE_NPC', 'npcId': n.get('id')}
+                            result = _apply_command(adventure_code, fallback_cmd)
+                            applied_commands.append({'command': fallback_cmd, 'applied': bool(result.get('npcId')), 'result': result, 'fallback': True})
+                            file_storage.append_log(adventure_code, 'game', f'Fallback REMOVE_NPC injetado para {dead_name} (IA não emitiu comando).')
+                            break
 
     if not damage_already_applied and char and char.get('life', {}).get('state') != 'dead':
         harm_keywords = ['enfiou', 'cortou', 'faca', 'esfaqueou', 'apunhalou', 'feriu', 'machucou', 'queimou', 'caiu', 'penhasco', 'veneno', 'envenenou', 'sangrou', 'auto-mutil', 'mordeu', 'triturou', 'esmagou', 'dano', 'ferimento']
@@ -1029,6 +1052,15 @@ def _apply_command(adventure_code, cmd):
                 scene_service.remove_enemy_from_scene(adventure_code, scene['sceneId'], enemy_code)
             file_storage.delete_enemy(adventure_code, enemy_code)
         return {'enemyCode': enemy_code}
+
+    elif cmd_type == 'REMOVE_NPC':
+        npc_id = cmd.get('npcId') or cmd.get('id')
+        if npc_id:
+            scene = scene_service.get_current_scene(adventure_code)
+            if scene:
+                scene_service.remove_npc_from_scene(adventure_code, scene['sceneId'], npc_id)
+                return {'npcId': npc_id, 'sceneId': scene['sceneId']}
+        return {'npcId': npc_id}
 
     elif cmd_type == 'REGISTER_CRIME':
         global_info = file_storage.get_global_info(adventure_code)

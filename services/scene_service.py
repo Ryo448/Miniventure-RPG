@@ -171,6 +171,15 @@ def remove_enemy_from_scene(adventure_code, scene_id, enemy_code):
     return scene
 
 
+def remove_npc_from_scene(adventure_code, scene_id, npc_id):
+    scene = file_storage.get_scene(adventure_code, scene_id)
+    if not scene:
+        return None
+    scene['availableNPCs'] = [n for n in scene.get('availableNPCs', []) if n.get('id') != npc_id]
+    file_storage.save_scene(adventure_code, scene)
+    return scene
+
+
 def _list_scene_files(adventure_code):
     base = file_storage.resolve_adventure_path(adventure_code)
     scenes_dir = os.path.join(base, 'scenes')
