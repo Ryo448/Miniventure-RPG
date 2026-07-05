@@ -665,6 +665,14 @@ const Game = {
         for (const line of lines) {
             const trimmed = line.trim();
             if (!trimmed) { flushParagraph(); flushList(); flushBlockquote(); continue; }
+            const actionMatch = trimmed.match(/^\u25B6\s+(.*)$/);
+            if (actionMatch) {
+                flushParagraph();
+                flushList();
+                flushBlockquote();
+                out.push('<div class="action-log-action">' + actionMatch[1].replace(/"(.*?)"/g, '<span class="dialogue">"$1"</span>') + '</div>');
+                continue;
+            }
             const listMatch = trimmed.match(/^[-*]\s+(.*)$/);
             if (listMatch) {
                 flushParagraph();
