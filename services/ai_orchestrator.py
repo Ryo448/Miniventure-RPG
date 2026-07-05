@@ -839,6 +839,23 @@ def _process_ai_action(adventure_code, character_code, action, task_id, depth=0,
         for n in scene.get('availableNPCs', []):
             if n.get('name'):
                 existing_names.add(n['name'].lower())
+
+    def _name_matches(candidate_lower, names_set):
+        if not candidate_lower:
+            return False
+        for existing in names_set:
+            if not existing:
+                continue
+            if candidate_lower == existing:
+                return True
+            cand_first = candidate_lower.split()[0]
+            existing_first = existing.split()[0]
+            if cand_first == existing_first:
+                return True
+            if candidate_lower in existing or existing in candidate_lower:
+                return True
+        return False
+
     if not npc_already_added:
         npc_appear_kw = ['apareceu', 'aproxima', 'chega', 'chegou', 'surge', 'surgiu', 'aproximou']
         if any(kw in combined_text for kw in npc_appear_kw):
@@ -846,7 +863,7 @@ def _process_ai_action(adventure_code, character_code, action, task_id, depth=0,
             npc_name = None
             for m in re.finditer(r'([A-ZÀ-Ú][a-zà-ú]{2,})', action_text + ' ' + narration):
                 candidate = m.group(1)
-                if candidate.lower() in existing_names:
+                if _name_matches(candidate.lower(), existing_names):
                     continue
                 npc_name = candidate
                 break
