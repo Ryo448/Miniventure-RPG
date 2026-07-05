@@ -186,7 +186,8 @@ const Game = {
         if (narrationEl && scene.description) {
             if (this.lastSceneDescription === scene.description) return;
             this.lastSceneDescription = scene.description;
-            this.typeText(narrationEl, scene.description);
+            narrationEl.innerHTML = this._renderMarkdown(scene.description);
+            narrationEl.scrollTop = narrationEl.scrollHeight;
         }
 
         if (npcsEl && scene.availableNPCs) {
@@ -249,6 +250,8 @@ const Game = {
         if (!bot) return;
         try {
             this.setActionInProgress(true, 'Bot agindo...');
+            this._pendingActionLabel = null;
+            this._pendingActionCharName = bot.name || botCode;
             const res = await API.botAct(this.adventureId, botCode);
             if (res && res.taskId) {
                 this.currentTaskId = res.taskId;
@@ -466,6 +469,8 @@ const Game = {
     async submitAction(action) {
         if (this.actionInProgress || this.isSpectator) return;
         this.setActionInProgress(true, 'Processando ação...');
+        this._pendingActionLabel = action;
+        this._pendingActionCharName = null;
 
         try {
             const result = await API.postAction(this.adventureId, this.characterCode, action);
@@ -590,18 +595,101 @@ const Game = {
 
         const entry = document.createElement('div');
         entry.className = 'action-log-entry';
-        entry.style.borderTop = '1px solid var(--border-subtle)';
-        entry.style.marginTop = '12px';
+        entry.style.borderTop = '1px solid var(--border-gold)';
+        entry.style.borderLeft = '2px solid var(--gold)';
+        entry.style.marginTop = '14px';
         entry.style.paddingTop = '12px';
+        entry.style.paddingLeft = '10px';
+
+        const actionLabel = result.actionLabel || this._pendingActionLabel || null;
+        const charName = result.characterName || this._pendingActionCharName || null;
+        this._pendingActionLabel = null;
+        this._pendingActionCharName = null;
+
+        if (actionLabel && charName) {
+            const actionEl = document.createElement('div');
+            actionEl.className = 'action-log-action';
+            actionEl.innerHTML = '<span class="action-log-arrow">\u25B8</span> <span class="action-log-name"></span> <em></em>';
+            actionEl.querySelector('.action-log-name').textContent = charName + ':';
+            actionEl.querySelector('em').textContent = actionLabel;
+            entry.appendChild(actionEl);
+        } else if (actionLabel) {
+            const actionEl = document.createElement('div');
+            actionEl.className = 'action-log-action';
+            actionEl.innerHTML = '<span class="action-log-arrow">\u25B8</span> <em></em>';
+            actionEl.querySelector('em').textContent = actionLabel;
+            entry.appendChild(actionEl);
+        }
+
         const narration = result.narration || result.message || '';
         if (narration) {
-            const p = document.createElement('p');
+            const p = document.createElement('div');
             p.className = 'narration-paragraph';
-            p.innerHTML = narration;
+            p.innerHTML = this._renderMarkdown(narration);
             entry.appendChild(p);
         }
+
+        const t = document.createElement('div');
+        t.className = 'action-log-timestamp';
+        t.textContent = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+        entry.appendChild(t);
+
         narrationEl.appendChild(entry);
         narrationEl.scrollTop = narrationEl.scrollHeight;
+    },
+
+    _renderMarkdown(text) {
+        if (!text) return '';
+        const esc = document.createElement('div');
+        esc.textContent = text;
+        let html = esc.innerHTML;
+        html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+        html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
+        const lines = html.split(/\r?\n/);
+        const out = [];
+        let listOpen = false;
+        let paragraph = [];
+        let blockquoteOpen = false;
+        const flushParagraph = () => {
+            if (paragraph.length) {
+                out.push('<p>' + paragraph.join('<br>') + '</p>');
+                paragraph = [];
+            }
+        };
+        const flushList = () => {
+            if (listOpen) { out.push('</ul>'); listOpen = false; }
+        };
+        const flushBlockquote = () => {
+            if (blockquoteOpen) { out.push('</blockquote>'); blockquoteOpen = false; }
+        };
+        for (const line of lines) {
+            const trimmed = line.trim();
+            if (!trimmed) { flushParagraph(); flushList(); flushBlockquote(); continue; }
+            const listMatch = trimmed.match(/^[-*]\s+(.*)$/);
+            if (listMatch) {
+                flushParagraph();
+                flushBlockquote();
+                if (!listOpen) { out.push('<ul>'); listOpen = true; }
+                out.push('<li>' + listMatch[1] + '</li>');
+                continue;
+            }
+            const quoteMatch = trimmed.match(/^>\s?(.*)$/);
+            if (quoteMatch) {
+                flushParagraph();
+                flushList();
+                if (!blockquoteOpen) { out.push('<blockquote>'); blockquoteOpen = true; }
+                out.push('<p>' + quoteMatch[1].replace(/"(.*?)"/g, '<span class="dialogue">"$1"</span>') + '</p>');
+                continue;
+            }
+            flushList();
+            flushBlockquote();
+            const styled = trimmed.replace(/"(.*?)"/g, '<span class="dialogue">"$1"</span>');
+            paragraph.push(styled);
+        }
+        flushParagraph();
+        flushList();
+        flushBlockquote();
+        return out.join('');
     },
 
     setActionInProgress(inProgress, message) {

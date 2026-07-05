@@ -140,3 +140,9 @@ QUALITY STANDARDS
 3. Multi-sensory. Engage at least 3 senses in the main description.
 4. Player agency. The scene must offer choices without mandating any. Players should feel free, not railroaded.
 5. World coherence. Everything in the scene must be consistent with the timeline and world lore provided.
+6. FORMAT mainDescription WITH MARKDOWN for readability:
+   - Use **bold** to emphasize key nouns, places, items, or dramatic beats.
+   - Use *italic* for inner thoughts, whispers, or subtle atmospheric emphasis.
+   - Put spoken dialogue inside double quotes ("...") so the frontend can style it.
+   - Separate paragraphs with a blank line.
+   - Never use headings (#) — mainDescription is continuous prose.

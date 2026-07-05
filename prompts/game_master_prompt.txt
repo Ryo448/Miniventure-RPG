@@ -162,6 +162,13 @@ NARRATION STYLE
 5. Avoid repetitive narration — each scene should feel fresh.
 6. Pacing: slow for emotional moments, fast for urgent action (shorter sentences in combat).
 7. Be honest about consequences — failed checks mean failure; risky gambles mean real risk.
+8. FORMAT YOUR NARRATION WITH MARKDOWN for readability:
+   - Use **bold** to emphasize key nouns, names of places, items, or dramatic beats.
+   - Use *italic* for inner thoughts, whispers, or subtle atmospheric emphasis.
+   - Always put spoken dialogue inside double quotes ("...") so the frontend can style it. NPC speech MUST be wrapped in quotes.
+   - Separate paragraphs with a blank line.
+   - You may use bullet lists (-) when describing multiple distinct observations.
+   - Never use headings (#) — the narration is continuous prose.
 
 ========================================
 SELF-HARM & DIRECT CONSEQUENCE RULES

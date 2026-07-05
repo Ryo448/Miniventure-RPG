@@ -757,7 +757,7 @@ def _process_ai_action(adventure_code, character_code, action, task_id, depth=0,
 
     if narration:
         action_label = action.get('description', action) if isinstance(action, dict) else action
-        log_entry = f'{char.get("name", character_code)}: {action_label}\n{narration}'
+        log_entry = f'\n> **{char.get("name", character_code)}:** *{action_label}*\n\n{narration}\n'
         scene_service.update_scene_context(adventure_code, scene['sceneId'], log_entry, append=True)
 
     damage_already_applied = any(
@@ -932,7 +932,9 @@ def _process_ai_action(adventure_code, character_code, action, task_id, depth=0,
         'privateReasoningSummary': ai_response.get('privateReasoningSummary'),
         'commands': applied_commands,
         'requiresDiceRoll': False,
-        'turnResult': ai_response.get('turnResult', {'endTurn': True, 'nextCharacterCode': None})
+        'turnResult': ai_response.get('turnResult', {'endTurn': True, 'nextCharacterCode': None}),
+        'actionLabel': action if isinstance(action, str) else (action.get('description', str(action)) if isinstance(action, dict) else str(action)),
+        'characterName': char.get('name', character_code) if char else character_code
     }
 
 
