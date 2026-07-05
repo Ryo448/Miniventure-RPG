@@ -748,6 +748,32 @@ def _process_ai_action(adventure_code, character_code, action, task_id, depth=0,
         log_entry = f'{char.get("name", character_code)}: {action_label}\n{narration}'
         scene_service.update_scene_context(adventure_code, scene['sceneId'], log_entry, append=True)
 
+    damage_already_applied = any(
+        c.get('command', {}).get('type') == 'APPLY_DAMAGE' and c.get('command', {}).get('characterCode') == character_code
+        for c in applied_commands if c.get('applied')
+    )
+
+    if not damage_already_applied and char and char.get('life', {}).get('state') != 'dead':
+        action_text = action if isinstance(action, str) else (action.get('description', '') if isinstance(action, dict) else '')
+        harm_keywords = ['enfiou', 'cortou', 'faca', 'esfaqueou', 'apunhalou', 'feriu', 'machucou', 'queimou', 'caiu', 'penhasco', 'veneno', 'envenenou', 'sangrou', 'auto-mutil', 'mordeu', 'triturou', 'esmagou', 'dano', 'ferimento']
+        combined_text = (action_text + ' ' + narration).lower()
+        if any(kw in combined_text for kw in harm_keywords):
+            severe_kw = [('morte', 'penhasco', 'suicid', 'saltou do'), ('faca', 'esfaque', 'apunhal', 'enfiou'), ('cortou', 'feriu', 'machucou', 'queimou', 'mordeu'), ('veneno', 'envenen')]
+            amount = 0
+            if any(k in combined_text for k in severe_kw[0]):
+                amount = 35
+            elif any(k in combined_text for k in severe_kw[1]):
+                amount = 25
+            elif any(k in combined_text for k in severe_kw[2]):
+                amount = 15
+            elif any(k in combined_text for k in severe_kw[3]):
+                amount = 20
+            if amount > 0:
+                fallback_cmd = {'type': 'APPLY_DAMAGE', 'characterCode': character_code, 'amount': amount, 'source': 'consequência direta'}
+                result = _apply_command(adventure_code, fallback_cmd)
+                applied_commands.append({'command': fallback_cmd, 'applied': True, 'result': result, 'fallback': True})
+                file_storage.append_log(adventure_code, 'game', f'Fallback APPLY_DAMAGE injetado para {character_code}: {amount} dano (IA não emitiu comando).')
+
     if ai_response.get('turnResult', {}).get('endTurn'):
         scene = scene_service.get_current_scene(adventure_code)
         if scene:
