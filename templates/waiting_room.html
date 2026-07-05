@@ -573,7 +573,7 @@
                 var aiPrep = data.aiPreparation || {};
                 var stagesMap = { timeline: 'timeline', initialScene: 'initialScene', bots: 'bots' };
                 var failedStages = Object.keys(aiPrep).filter(function(s){
-                    return aiPrep[s] === 'failed' && (s === 'timeline' || s === 'initialScene');
+                    return aiPrep[s] === 'failed';
                 });
                 if (failedStages.length === 0) {
                     if (errDiv) { errDiv.textContent = 'Nenhuma stage em falha.'; errDiv.style.display = 'block'; }

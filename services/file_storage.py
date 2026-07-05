@@ -236,6 +236,17 @@ def save_adventure_character(adventure_code, character_data):
     write_json(filepath, character_data)
 
 
+def delete_adventure_character(adventure_code, character_code):
+    base = resolve_adventure_path(adventure_code)
+    filepath = os.path.join(base, 'characters', f'{character_code}.json')
+    if os.path.exists(filepath):
+        os.remove(filepath)
+    adventure = read_json(os.path.join(base, 'adventure.json'))
+    if adventure and character_code in adventure.get('connectedCharacters', []):
+        adventure['connectedCharacters'].remove(character_code)
+        write_json(os.path.join(base, 'adventure.json'), adventure)
+
+
 def get_scene(adventure_code, scene_id):
     base = resolve_adventure_path(adventure_code)
     filepath = os.path.join(base, 'scenes', f'{scene_id}.json')

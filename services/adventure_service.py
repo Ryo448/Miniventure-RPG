@@ -153,7 +153,14 @@ def retry_ai_stage(adventure_code, stage):
         return True, 'Retry da cena inicial iniciado.'
 
     if stage == 'bots':
-        return False, 'Retry de bots não suportado. Recrie a aventura.'
+        characters = file_storage.get_adventure_characters(adventure_code)
+        existing_bots = [c for c in characters if c.get('isBot')]
+        if existing_bots:
+            for bot in existing_bots:
+                file_storage.delete_adventure_character(adventure_code, bot['code'])
+        file_storage.update_ai_preparation_stage(adventure_code, 'bots', 'pending')
+        ai_orchestrator.generate_bot_async(adventure_code, adventure.get('botCount', 0))
+        return True, 'Retry de bots iniciado (destruídos e regerados).'
 
     return False, 'Stage não suportado para retry.'
 
