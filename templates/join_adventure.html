@@ -1,0 +1,271 @@
+{% extends "base.html" %}
+
+{% block title %}Entrar em Aventura - Miniventure RPG{% endblock %}
+
+{% block content %}
+<div class="join-adventure-container">
+    <h1 class="section-title">Entrar em Aventura</h1>
+
+    {% if error %}
+    <div class="error-msg">{{ error }}</div>
+    {% endif %}
+
+    <div id="message-area"></div>
+
+    {% if error %}
+    <div class="error-msg">{{ error }}</div>
+    {% else %}
+    <p style="color:var(--text-muted); margin-bottom:24px;">Selecione um personagem e clique na aventura que deseja entrar.</p>
+
+    <div class="form-group" style="margin-bottom:24px;">
+        <label for="character-select">Selecione seu personagem</label>
+        <select id="character-select">
+            <option value="">Escolha um personagem...</option>
+        </select>
+        <small class="form-hint" style="display:block; margin-top:4px; font-size:0.82rem; color:var(--text-muted);">
+            Crie um personagem em Personagens > Criar Novo
+        </small>
+    </div>
+    {% endif %}
+
+    <div class="adventure-list">
+        {% for adv in adventures %}
+        <div class="adventure-card card" onclick="joinAdventure('{{ adv.code }}')">
+            <div class="adventure-card-header">
+                <span class="adventure-code">Aventura #{{ adv.code }}</span>
+                <span class="adventure-status status-{{ adv.status }}">{{ adv.status_label }}</span>
+            </div>
+            <div class="adventure-card-body">
+                <div class="adventure-info">
+                    <span class="adventure-info-label">Jogadores</span>
+                    <span class="adventure-info-value">{{ adv.player_count }} / {{ adv.max_players }}</span>
+                </div>
+                <div class="adventure-info">
+                    <span class="adventure-info-label">Criada em</span>
+                    <span class="adventure-info-value">{{ adv.created_at }}</span>
+                </div>
+            </div>
+            <div class="adventure-card-footer">
+                <span class="adventure-join-hint">Clique para entrar</span>
+                <button type="button" class="btn btn-sm btn-danger adventure-delete-btn" onclick="event.stopPropagation(); deleteAdventure('{{ adv.code }}')">Excluir</button>
+            </div>
+        </div>
+        {% else %}
+        <div class="empty-state card">
+            <div class="empty-icon">🔮</div>
+            <p class="empty-text">Nenhuma aventura disponível no momento.</p>
+            <a href="/adventures/create" class="btn">Criar uma Aventura</a>
+        </div>
+        {% endfor %}
+    </div>
+
+    <a href="/" class="back-link">← Voltar</a>
+</div>
+
+<style>
+    .join-adventure-container {
+        max-width: 640px;
+        margin: 0 auto;
+    }
+
+    .adventure-list {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        margin-bottom: 24px;
+    }
+
+    .adventure-card {
+        cursor: pointer;
+        transition: all 0.25s ease;
+    }
+
+    .adventure-card:hover {
+        border-color: var(--gold);
+        box-shadow:
+            0 4px 20px var(--shadow-dark),
+            0 0 20px rgba(201, 168, 76, 0.1);
+        transform: translateY(-2px);
+    }
+
+    .adventure-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+    }
+
+    .adventure-code {
+        font-family: var(--font-title);
+        font-size: 1.2rem;
+        color: var(--gold);
+    }
+
+    .adventure-status {
+        font-size: 0.8rem;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .status-waiting {
+        background: rgba(201, 168, 76, 0.15);
+        color: var(--gold);
+        border: 1px solid var(--gold-dim);
+    }
+
+    .status-full {
+        background: rgba(139, 26, 26, 0.15);
+        color: #e05555;
+        border: 1px solid rgba(139, 26, 26, 0.3);
+    }
+
+    .status-started {
+        background: rgba(45, 106, 45, 0.15);
+        color: #5ab55a;
+        border: 1px solid rgba(45, 106, 45, 0.3);
+    }
+
+    .adventure-card-body {
+        display: flex;
+        gap: 32px;
+        margin-bottom: 12px;
+    }
+
+    .adventure-info-label {
+        display: block;
+        font-size: 0.78rem;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 2px;
+    }
+
+    .adventure-info-value {
+        font-size: 0.95rem;
+        color: var(--text-light);
+    }
+
+    .adventure-card-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-top: 1px solid var(--border-gold);
+        padding-top: 10px;
+    }
+
+    .adventure-delete-btn {
+        padding: 4px 14px;
+        font-size: 0.8rem;
+    }
+
+    .adventure-join-hint {
+        font-size: 0.82rem;
+        color: var(--text-muted);
+        font-style: italic;
+    }
+
+    .adventure-card:hover .adventure-join-hint {
+        color: var(--gold);
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 48px 32px;
+        margin-bottom: 24px;
+    }
+
+    .empty-icon {
+        font-size: 3rem;
+        margin-bottom: 16px;
+    }
+
+    .empty-text {
+        font-family: var(--font-title);
+        font-size: 1.1rem;
+        color: var(--text-muted);
+        margin-bottom: 24px;
+    }
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function loadCharacters() {
+    fetch('/api/local-characters')
+        .then(function(r) { return r.json(); })
+        .then(function(chars) {
+            var sel = document.getElementById('character-select');
+            if (!sel) return;
+            sel.innerHTML = '<option value="">Escolha um personagem...</option>';
+            if (chars.length === 0) {
+                sel.innerHTML = '<option value="">Nenhum personagem criado</option>';
+                var hint = document.querySelector('.form-hint');
+                if (hint) hint.textContent = 'Crie um personagem em Personagens > Criar Novo';
+                return;
+            }
+            chars.forEach(function(c) {
+                var opt = document.createElement('option');
+                opt.value = c.code;
+                opt.textContent = c.name + ' (' + (c.race || 'Desconhecida') + ')';
+                sel.appendChild(opt);
+            });
+        })
+        .catch(function() {
+            var sel = document.getElementById('character-select');
+            if (sel) sel.innerHTML = '<option value="">Erro ao carregar personagens</option>';
+        });
+}
+
+function joinAdventure(code) {
+    var charSel = document.getElementById('character-select');
+    var area = document.getElementById('message-area');
+    area.innerHTML = '';
+
+    var charCode = charSel ? charSel.value : '';
+    if (!charCode) {
+        area.innerHTML = '<div class="error-msg">Selecione um personagem para entrar na aventura.</div>';
+        return;
+    }
+
+    fetch('/api/adventures/' + code + '/join', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ characterCode: charCode })
+    })
+        .then(function(res) { return res.json(); })
+        .then(function(data) {
+            if (data.error) {
+                area.innerHTML = '<div class="error-msg">' + data.error + '</div>';
+            } else {
+                try {
+                    sessionStorage.setItem('adv_' + code + '_char', charCode);
+                    document.cookie = 'adv_' + code + '_char=' + encodeURIComponent(charCode) + ';path=/;max-age=86400;SameSite=Lax';
+                } catch(e) {}
+                window.location.href = '/adventures/' + code + '/waiting-room';
+            }
+        })
+        .catch(function() {
+            area.innerHTML = '<div class="error-msg">Erro ao entrar na aventura.</div>';
+        });
+}
+
+loadCharacters();
+
+function deleteAdventure(code) {
+    if (!confirm('Tem certeza que deseja excluir a aventura #' + code + '? Esta ação não pode ser desfeita.')) return;
+    fetch('/api/adventures/' + code, { method: 'DELETE' })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (data.error) {
+                alert(data.error);
+            } else {
+                window.location.reload();
+            }
+        })
+        .catch(function() { alert('Erro ao excluir aventura.'); });
+}
+</script>
+{% endblock %}

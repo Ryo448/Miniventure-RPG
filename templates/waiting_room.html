@@ -1,0 +1,550 @@
+{% extends "base.html" %}
+
+{% block title %}Sala de Espera - Aventura #{{ adventure.code }} - Miniventure RPG{% endblock %}
+
+{% block extra_head %}
+<style>
+    .waiting-container { max-width: 640px; margin: 0 auto; text-align: center; }
+    .waiting-title {
+        font-family: var(--font-title);
+        font-size: 1.6rem;
+        color: var(--gold);
+        margin-bottom: 12px;
+    }
+    .waiting-code {
+        font-size: 0.95rem;
+        color: var(--text-muted);
+        margin-bottom: 32px;
+    }
+
+    .players-section {
+        background: linear-gradient(145deg, var(--bg-card) 0%, var(--bg-panel) 100%);
+        border: 1px solid var(--border-gold);
+        border-radius: 10px;
+        padding: 24px;
+        margin-bottom: 24px;
+        box-shadow: 0 4px 20px var(--shadow-dark);
+    }
+    .section-label {
+        font-family: var(--font-title);
+        color: var(--gold);
+        font-size: 1.1rem;
+        margin-bottom: 16px;
+        text-align: left;
+    }
+
+    .player-list { list-style: none; padding: 0; text-align: left; }
+    .player-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 14px;
+        border-bottom: 1px solid var(--border-subtle);
+        font-size: 0.95rem;
+    }
+    .player-item:last-child { border-bottom: none; }
+    .player-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: var(--bg-dark);
+        border: 1px solid var(--border-gold);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.9rem;
+    }
+    .player-name { flex: 1; color: var(--text-light); }
+    .player-tag {
+        font-size: 0.75rem;
+        padding: 2px 10px;
+        border-radius: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 600;
+    }
+    .tag-host {
+        background: rgba(201, 168, 76, 0.15);
+        color: var(--gold);
+        border: 1px solid var(--gold-dim);
+    }
+    .tag-bot {
+        background: rgba(26, 58, 92, 0.2);
+        color: #6aa8d4;
+        border: 1px solid rgba(26, 58, 92, 0.4);
+    }
+    .tag-ready {
+        background: rgba(45, 106, 45, 0.15);
+        color: #5ab55a;
+        border: 1px solid rgba(45, 106, 45, 0.3);
+    }
+    .tag-waiting {
+        background: rgba(138, 130, 114, 0.15);
+        color: var(--text-muted);
+        border: 1px solid rgba(138, 130, 114, 0.2);
+    }
+
+    .player-count-bar {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 24px;
+        padding: 12px 16px;
+        background: var(--bg-dark);
+        border-radius: 8px;
+        border: 1px solid var(--border-subtle);
+    }
+    .count-text {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+        white-space: nowrap;
+    }
+    .count-bar {
+        flex: 1;
+        height: 8px;
+        background: var(--bg-medium);
+        border-radius: 4px;
+        overflow: hidden;
+    }
+    .count-bar-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--gold-dim), var(--gold));
+        border-radius: 4px;
+        transition: width 0.5s ease;
+    }
+    .count-number {
+        font-family: var(--font-title);
+        color: var(--gold);
+        font-size: 1rem;
+    }
+
+    /* AI Status */
+    .ai-status-section {
+        background: linear-gradient(145deg, var(--bg-card) 0%, var(--bg-panel) 100%);
+        border: 1px solid var(--border-gold);
+        border-radius: 10px;
+        padding: 24px;
+        margin-bottom: 24px;
+        box-shadow: 0 4px 20px var(--shadow-dark);
+    }
+    .ai-status-indicator {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+    .ai-spinner {
+        width: 24px;
+        height: 24px;
+        border: 3px solid var(--border-gold);
+        border-top-color: var(--gold);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+    .ai-spinner.done { animation: none; border-color: var(--accent-green); border-top-color: #5ab55a; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .ai-status-text {
+        font-family: var(--font-title);
+        color: var(--text-light);
+        font-size: 1.05rem;
+    }
+    .ai-status-text.done { color: #5ab55a; }
+    .ai-progress-bar {
+        height: 6px;
+        background: var(--bg-dark);
+        border-radius: 3px;
+        overflow: hidden;
+    }
+    .ai-progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--accent-blue), var(--gold));
+        border-radius: 3px;
+        transition: width 0.6s ease;
+    }
+
+    .start-section { margin-top: 32px; }
+    .start-btn {
+        font-size: 1.2rem;
+        padding: 16px 48px;
+    }
+    .start-error {
+        margin-top: 12px;
+    }
+    .back-link-waiting {
+        display: inline-block;
+        margin-top: 20px;
+    }
+
+    /* Host Character Selector */
+    .host-select-section {
+        background: linear-gradient(145deg, var(--bg-card) 0%, var(--bg-panel) 100%);
+        border: 1px solid var(--gold);
+        border-radius: 10px;
+        padding: 24px;
+        margin-bottom: 24px;
+        box-shadow: 0 4px 20px var(--shadow-dark);
+    }
+    .host-select-section.hidden { display: none; }
+    .char-select-list {
+        list-style: none;
+        padding: 0;
+        margin: 12px 0;
+        max-height: 240px;
+        overflow-y: auto;
+    }
+    .char-select-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 14px;
+        border: 1px solid var(--border-subtle);
+        border-radius: 8px;
+        margin-bottom: 8px;
+        cursor: pointer;
+        transition: border-color 0.2s;
+        text-align: left;
+        width: 100%;
+        background: var(--bg-dark);
+        color: var(--text-light);
+        font-size: 0.95rem;
+    }
+    .char-select-item:hover { border-color: var(--gold); }
+    .char-select-item.selected { border-color: var(--gold); background: rgba(201, 168, 76, 0.08); }
+    .char-select-empty {
+        text-align: center;
+        color: var(--text-muted);
+        font-style: italic;
+        padding: 16px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="waiting-container">
+    <h1 class="waiting-title">Sala de Espera</h1>
+    <p class="waiting-code">Aventura #{{ adventure.code }}</p>
+
+    <!-- Host Character Selection -->
+    <div class="host-select-section" id="host-select-section">
+        <h2 class="section-label">Selecione seu personagem</h2>
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 8px;">Você é o host. Escolha um personagem para entrar na aventura.</p>
+        <ul class="char-select-list" id="host-char-list"></ul>
+        <div id="host-join-error" class="error-msg" style="display:none; margin-top:8px;"></div>
+    </div>
+
+    <!-- Player Count -->
+    <div class="player-count-bar">
+        <span class="count-text">Jogadores</span>
+        <div class="count-bar">
+            <div class="count-bar-fill" id="player-fill" style="width: {{ ((adventure.players|length / (adventure.max_players - (adventure.botCount or 0)) * 100)|int) if (adventure.max_players - (adventure.botCount or 0)) > 0 else 100 }}%"></div>
+        </div>
+        <span class="count-number" id="player-count-text">{{ adventure.players|length }}/{{ adventure.max_players - (adventure.botCount or 0) }}</span>
+    </div>
+
+    <!-- Connected Players -->
+    <div class="players-section">
+        <h2 class="section-label">Jogadores Conectados</h2>
+        <ul class="player-list" id="player-list">
+            {% for player in adventure.players %}
+            <li class="player-item">
+                <div class="player-icon">{{ player.nome[:1]|upper }}</div>
+                <span class="player-name">{{ player.nome }}</span>
+                {% if player.is_host %}
+                <span class="player-tag tag-host">Host</span>
+                {% elif player.is_bot %}
+                <span class="player-tag tag-bot">Bot</span>
+                {% endif %}
+                <span class="player-tag tag-ready">Pronto</span>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <!-- Bot Players -->
+    {% if adventure.bots %}
+    <div class="players-section">
+        <h2 class="section-label">Bots</h2>
+        <ul class="player-list" id="bot-list">
+            {% for bot in adventure.bots %}
+            <li class="player-item">
+                <div class="player-icon">🤖</div>
+                <span class="player-name">{{ bot.nome }} (Bot)</span>
+                <span class="player-tag tag-bot">Bot</span>
+                <span class="player-tag tag-waiting">Gerando...</span>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    <!-- AI Status -->
+    <div class="ai-status-section">
+        <h2 class="section-label">Preparação da IA</h2>
+        <div class="ai-status-indicator">
+            <div class="ai-spinner" id="ai-spinner"></div>
+            <span class="ai-status-text" id="ai-status-text">Preparando mundo...</span>
+        </div>
+        <div class="ai-progress-bar">
+            <div class="ai-progress-fill" id="ai-progress-fill" style="width: 0%"></div>
+        </div>
+    </div>
+
+    <!-- Start Button -->
+    <div class="start-section">
+        <button class="btn btn-primary start-btn" id="start-btn" disabled onclick="startAdventure()">
+            Iniciar Aventura
+        </button>
+        <div id="start-error" class="error-msg start-error" style="display:none;"></div>
+    </div>
+
+    <a href="/" class="back-link back-link-waiting">← Voltar</a>
+</div>
+
+<script>
+    var adventureCode = "{{ adventure.code }}";
+    var allReady = false;
+    var aiReady = false;
+    var hostConnected = {{ adventure.hostCharacterCode|tojson|safe if adventure.hostCharacterCode else 'false' }};
+
+    var stages = ['timeline', 'bots', 'initialScene'];
+    var statuses = {
+        timeline: 'Gerando timeline...',
+        bots: 'Gerando bots...',
+        initialScene: 'Gerando cena inicial...',
+        ready: 'Pronto!'
+    };
+    var statusIndex = 0;
+    var maxPlayers = {{ adventure.max_players | default(4) }};
+    var expectedBots = {{ adventure.botCount | default(0) }};
+    var requiredReal = Math.max(0, maxPlayers - expectedBots);
+    var currentPlayers = {{ adventure.players | length }};
+    var myCharacterCode = null;
+    try { myCharacterCode = sessionStorage.getItem('adv_' + adventureCode + '_char'); } catch(e) {}
+    if (!myCharacterCode) {
+        var cookieMatch = document.cookie.match(new RegExp('adv_' + adventureCode + '_char=([^;]+)'));
+        if (cookieMatch) myCharacterCode = decodeURIComponent(cookieMatch[1]);
+    }
+    var usedCharacterCodes = [
+        {% for bot in adventure.bots %}"{{ bot.code }}",{% endfor %}
+        {% for player in adventure.players %}"{{ player.code }}",{% endfor %}
+    ].filter(function(c) { return c && c.length > 0; });
+
+    function loadHostCharacters() {
+        if (myCharacterCode) {
+            document.getElementById('host-select-section').classList.add('hidden');
+            return;
+        }
+        fetch('/api/local-characters')
+            .then(function(r){ return r.json(); })
+            .then(function(chars) {
+                var list = document.getElementById('host-char-list');
+                if (!list) return;
+                list.innerHTML = '';
+                if (!chars || chars.length === 0) {
+                    list.innerHTML = '<li class="char-select-empty">Nenhum personagem encontrado. <a href="/characters/create" style="color:var(--gold);">Criar personagem</a></li>';
+                    return;
+                }
+                var available = chars.filter(function(c) { return usedCharacterCodes.indexOf(c.code) === -1; });
+                var inUse = chars.filter(function(c) { return usedCharacterCodes.indexOf(c.code) !== -1; });
+                list.innerHTML = '';
+                if (available.length === 0 && inUse.length === 0) {
+                    list.innerHTML = '<li class="char-select-empty">Nenhum personagem encontrado. <a href="/characters/create" style="color:var(--gold);">Criar personagem</a></li>';
+                    return;
+                }
+                available.forEach(function(c) {
+                    var li = document.createElement('li');
+                    li.className = 'char-select-item';
+                    li.innerHTML = '<div class="player-icon">' + (c.name || '?').charAt(0).toUpperCase() + '</div>'
+                        + '<span class="player-name">' + (c.name || 'Sem nome') + '</span>'
+                        + '<span style="color:var(--text-muted); font-size:0.82rem; margin-left:auto;">' + (c.race || '') + '</span>';
+                    li.addEventListener('click', function() { joinAsHost(c.code); });
+                    list.appendChild(li);
+                });
+                inUse.forEach(function(c) {
+                    var li = document.createElement('li');
+                    li.className = 'char-select-item';
+                    li.style.opacity = '0.6';
+                    li.innerHTML = '<div class="player-icon">' + (c.name || '?').charAt(0).toUpperCase() + '</div>'
+                        + '<span class="player-name">' + (c.name || 'Sem nome') + '</span>'
+                        + '<span style="color:var(--gold); font-size:0.75rem; margin-left:auto;">Já na aventura</span>';
+                    li.addEventListener('click', function() { joinAsHost(c.code); });
+                    list.appendChild(li);
+                });
+            })
+            .catch(function(){});
+    }
+
+    function joinAsHost(characterCode) {
+        var errDiv = document.getElementById('host-join-error');
+        if (errDiv) errDiv.style.display = 'none';
+
+        fetch('/api/adventures/' + adventureCode + '/join', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ characterCode: characterCode })
+        })
+            .then(function(r){ return r.json(); })
+            .then(function(data) {
+                if (data.error) {
+                    if (errDiv) {
+                        errDiv.textContent = data.error;
+                        errDiv.style.display = 'block';
+                    }
+                } else {
+                    hostConnected = true;
+                    myCharacterCode = characterCode;
+                    try {
+                        sessionStorage.setItem('adv_' + adventureCode + '_char', characterCode);
+                        document.cookie = 'adv_' + adventureCode + '_char=' + encodeURIComponent(characterCode) + ';path=/;max-age=86400;SameSite=Lax';
+                    } catch(e) {}
+                    document.getElementById('host-select-section').classList.add('hidden');
+                    updateAIStatus();
+                }
+            })
+            .catch(function(){
+                if (errDiv) {
+                    errDiv.textContent = 'Erro ao entrar na aventura.';
+                    errDiv.style.display = 'block';
+                }
+            });
+    }
+
+    function updateAIStatus() {
+        fetch('/api/adventures/' + adventureCode + '/status')
+            .then(function(r){ return r.json(); })
+            .then(function(data) {
+                var aiPrep = data.aiPreparation || {};
+                var done = 0;
+                var failed = false;
+                var nextStage = null;
+                stages.forEach(function(s) {
+                    if (aiPrep[s] === 'completed') done++;
+                    if (aiPrep[s] === 'failed') failed = true;
+                    if (nextStage === null && aiPrep[s] !== 'completed' && aiPrep[s] !== 'failed') {
+                        nextStage = s;
+                    }
+                });
+                statusIndex = done;
+                aiReady = data.isReady || (done === stages.length && !failed);
+
+                var text = document.getElementById('ai-status-text');
+                var spinner = document.getElementById('ai-spinner');
+                var fill = document.getElementById('ai-progress-fill');
+
+                if (failed) {
+                    text.textContent = 'Erro na preparação. Tente recriar a aventura.';
+                    text.className = 'ai-status-text';
+                    spinner.className = 'ai-spinner';
+                    fill.style.width = '100%';
+                    fill.style.background = 'linear-gradient(90deg, #8b1a1a, #cc3333)';
+                } else if (aiReady) {
+                    text.textContent = statuses.ready;
+                    text.className = 'ai-status-text done';
+                    spinner.className = 'ai-spinner done';
+                    fill.style.width = '100%';
+                } else {
+                    var label = nextStage ? (statuses[nextStage] || 'Preparando...') : 'Preparando...';
+                    text.textContent = label;
+                    text.className = 'ai-status-text';
+                    spinner.className = 'ai-spinner';
+                    fill.style.width = (done / stages.length * 100) + '%';
+                }
+
+                var count = data.realPlayerCount !== undefined ? data.realPlayerCount : currentPlayers;
+                var max = requiredReal;
+                document.getElementById('player-count-text').textContent = count + '/' + max;
+                document.getElementById('player-fill').style.width = (count / max * 100) + '%';
+
+                var chars = data.characters || [];
+                var realPlayers = chars.filter(function(c){ return !c.isBot; });
+                var botChars = chars.filter(function(c){ return c.isBot; });
+
+                var playerList = document.getElementById('player-list');
+                if (playerList) {
+                    playerList.innerHTML = '';
+                    if (realPlayers.length === 0) {
+                        playerList.innerHTML = '<li class="player-item" style="color: var(--text-muted); justify-content: center;">Nenhum jogador conectado ainda.</li>';
+                    } else {
+                        realPlayers.forEach(function(p) {
+                            var li = document.createElement('li');
+                            li.className = 'player-item';
+                            li.innerHTML = '<div class="player-icon">' + (p.name || '?').charAt(0).toUpperCase() + '</div>'
+                                + '<span class="player-name">' + (p.name || 'Jogador') + '</span>'
+                                + '<span class="player-tag tag-ready">Pronto</span>';
+                            playerList.appendChild(li);
+                        });
+                    }
+                }
+
+                var botList = document.getElementById('bot-list');
+                if (botList) {
+                    botList.innerHTML = '';
+                    botChars.forEach(function(b) {
+                        var li = document.createElement('li');
+                        li.className = 'player-item';
+                        li.innerHTML = '<div class="player-icon">🤖</div>'
+                            + '<span class="player-name">' + (b.name || 'Bot') + ' (Bot)</span>'
+                            + '<span class="player-tag tag-bot">Bot</span>'
+                            + '<span class="player-tag tag-ready">Pronto</span>';
+                        botList.appendChild(li);
+                    });
+                }
+
+                allReady = count >= requiredReal;
+
+                if (data.adventure && data.adventure.hostCharacterCode) {
+                    hostConnected = true;
+                    var hostSection = document.getElementById('host-select-section');
+                    if (hostSection) hostSection.classList.add('hidden');
+                }
+
+                checkStartReadiness();
+            })
+            .catch(function(){});
+    }
+
+    function checkStartReadiness() {
+        document.getElementById('start-btn').disabled = !(allReady && aiReady && hostConnected);
+    }
+
+    function startAdventure() {
+        var errDiv = document.getElementById('start-error');
+        errDiv.style.display = 'none';
+
+        var charCode = myCharacterCode;
+        if (!charCode) {
+            try { charCode = sessionStorage.getItem('adv_' + adventureCode + '_char'); } catch(e) {}
+        }
+        if (!charCode) {
+            var match = document.cookie.match(new RegExp('adv_' + adventureCode + '_char=([^;]+)'));
+            if (match) charCode = decodeURIComponent(match[1]);
+        }
+        if (!charCode) {
+            errDiv.textContent = 'Selecione seu personagem antes de iniciar.';
+            errDiv.style.display = 'block';
+            document.getElementById('host-select-section').classList.remove('hidden');
+            return;
+        }
+
+        fetch('/api/adventures/' + adventureCode + '/start', { method: 'POST' })
+            .then(function(r){ return r.json(); })
+            .then(function(data) {
+                if (data.error) {
+                    errDiv.textContent = data.error;
+                    errDiv.style.display = 'block';
+                } else {
+                    var charParam = '?char=' + encodeURIComponent(charCode);
+                    window.location.href = '/adventures/' + adventureCode + '/game' + charParam;
+                }
+            })
+            .catch(function(){
+                errDiv.textContent = 'Erro ao iniciar a aventura. Tente novamente.';
+                errDiv.style.display = 'block';
+            });
+    }
+
+    setInterval(updateAIStatus, 3000);
+    updateAIStatus();
+    loadHostCharacters();
+</script>
+{% endblock %}

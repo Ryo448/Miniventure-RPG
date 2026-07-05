@@ -1,0 +1,369 @@
+{% extends "base.html" %}
+
+{% block title %}{% if edit_mode %}Editar Personagem{% else %}Criar Personagem{% endif %} - Miniventure RPG{% endblock %}
+
+{% block extra_head %}
+<style>
+    .creator-container { max-width: 720px; margin: 0 auto; }
+    .creator-section {
+        background: linear-gradient(145deg, var(--bg-card) 0%, var(--bg-panel) 100%);
+        border: 1px solid var(--border-gold);
+        border-radius: 10px;
+        padding: 24px;
+        margin-bottom: 24px;
+        box-shadow: 0 4px 20px var(--shadow-dark);
+    }
+    .creator-section-title {
+        font-family: var(--font-title);
+        font-size: 1.25rem;
+        color: var(--gold);
+        margin-bottom: 20px;
+        border-bottom: 1px solid var(--border-gold);
+        padding-bottom: 10px;
+    }
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin-bottom: 20px;
+    }
+    .form-group { margin-bottom: 20px; }
+    .form-group:last-child { margin-bottom: 0; }
+
+    .race-desc, #race-details {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        font-style: italic;
+        margin-top: 8px;
+        padding: 10px;
+        background: var(--bg-dark);
+        border-radius: 6px;
+        border: 1px solid var(--border-subtle);
+        min-height: 40px;
+    }
+    #race-modifiers { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .mod-tag {
+        font-size: 0.78rem;
+        padding: 2px 10px;
+        border-radius: 12px;
+        border: 1px solid var(--border-gold);
+    }
+    .mod-positive { color: #5ab55a; border-color: rgba(45,106,45,0.3); background: rgba(45,106,45,0.1); }
+    .mod-negative { color: #e05555; border-color: rgba(139,26,26,0.3); background: rgba(139,26,26,0.1); }
+
+    /* Attributes */
+    .attr-distribution { margin-top: 8px; }
+    .attr-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 8px 0;
+        border-bottom: 1px solid var(--border-subtle);
+    }
+    .attr-row:last-child { border-bottom: none; }
+    .attr-name {
+        min-width: 130px;
+        font-family: var(--font-title);
+        color: var(--text-light);
+        font-size: 0.95rem;
+    }
+    .attr-controls {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .attr-btn {
+        width: 34px;
+        height: 34px;
+        border: 1px solid var(--border-gold);
+        border-radius: 6px;
+        background: var(--bg-dark);
+        color: var(--gold);
+        font-size: 1.2rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.15s;
+    }
+    .attr-btn:hover { border-color: var(--gold); background: var(--bg-panel); }
+    .attr-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+    .attr-value {
+        min-width: 32px;
+        text-align: center;
+        font-weight: bold;
+        font-size: 1.1rem;
+        color: var(--gold-light);
+    }
+    .points-remaining {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 14px 16px;
+        background: var(--bg-dark);
+        border: 1px solid var(--gold-dim);
+        border-radius: 8px;
+        margin-bottom: 16px;
+        font-family: var(--font-title);
+    }
+    .points-label { color: var(--text-light); font-size: 1rem; }
+    .points-count { color: var(--gold-light); font-size: 1.4rem; font-weight: bold; }
+    .points-low { color: #e6c866; }
+    .points-zero { color: #e05555; }
+
+    /* Detail card */
+    .detail-card, #weapon-details, #ability-details {
+        margin-top: 12px;
+        padding: 16px;
+        background: var(--bg-dark);
+        border: 1px solid var(--border-gold);
+        border-radius: 8px;
+    }
+    .detail-card h4, #weapon-details h4, #ability-details h4 {
+        font-family: var(--font-title);
+        color: var(--gold);
+        font-size: 1.1rem;
+        margin-bottom: 6px;
+    }
+    .detail-card p, #weapon-details p, #ability-details p {
+        font-size: 0.9rem;
+        color: var(--text-light);
+        line-height: 1.5;
+        margin-bottom: 6px;
+    }
+
+    .form-note {
+        font-size: 0.82rem;
+        color: var(--text-muted);
+        font-style: italic;
+        margin-top: 4px;
+    }
+
+    .creator-actions {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        margin-bottom: 24px;
+    }
+
+    #error-messages { display: none; margin-bottom: 16px; }
+    #error-messages .error { color: #e05555; margin-bottom: 4px; }
+
+    /* AI Enhance buttons */
+    .ai-enhance-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 14px;
+        background: var(--bg-dark);
+        border: 1px solid var(--border-gold);
+        border-radius: 6px;
+        color: var(--gold);
+        cursor: pointer;
+        font-size: 0.82rem;
+        font-family: var(--font-title);
+        transition: all 0.2s;
+        margin-top: 6px;
+    }
+    .ai-enhance-btn:hover:not(:disabled) { border-color: var(--gold); background: var(--bg-panel); }
+    .ai-enhance-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .ai-enhance-btn.loading::before {
+        content: '⟳';
+        animation: spin 1s linear infinite;
+        display: inline-block;
+    }
+    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    .field-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 6px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="creator-container">
+    <h1 class="section-title">{% if edit_mode %}Editar Personagem{% else %}Criar Personagem{% endif %}</h1>
+
+    <form id="character-form">
+        <!-- Basic Info -->
+        <div class="creator-section">
+            <h2 class="creator-section-title">Informações Básicas</h2>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="char-name">Nome</label>
+                    <input type="text" id="char-name" name="name" required placeholder="Nome do personagem">
+                </div>
+                <div class="form-group">
+                    <label for="char-gender">Gênero</label>
+                    <select id="char-gender" name="gender" required>
+                        <option value="masculino">Masculino</option>
+                        <option value="feminino">Feminino</option>
+                        <option value="nao-binario">Não-binário</option>
+                        <option value="hermafrodita">Hermafrodita</option>
+                        <option value="assexual">Assexuado</option>
+                        <option value="sem-genero">Sem gênero</option>
+                        <option value="outro">Outro</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="char-age">Idade</label>
+                    <input type="number" id="char-age" name="age" min="1" value="25" required>
+                </div>
+                <div class="form-group">
+                    <label for="race-select">Raça</label>
+                    <select id="race-select" name="raceId" required>
+                        <option value="">Carregando raças...</option>
+                    </select>
+                    <div id="race-details">Selecione uma raça para ver sua descrição.</div>
+                    <div id="race-modifiers"></div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="field-header">
+                    <label for="char-story">História do Personagem</label>
+                    <button type="button" class="ai-enhance-btn" data-field="story">✨ Aprimorar com IA</button>
+                </div>
+                <textarea id="char-story" name="story" rows="4" placeholder="Conte a história do seu personagem..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <div class="field-header">
+                    <label for="char-physical">Detalhes Físicos Extras</label>
+                    <button type="button" class="ai-enhance-btn" data-field="physicalDescription">✨ Aprimorar com IA</button>
+                </div>
+                <textarea id="char-physical" name="customDescription" rows="3" placeholder="Cicatrizes, tatuagens, marcas distintivas..."></textarea>
+                <small class="form-note">A descrição base da raça será adicionada automaticamente</small>
+            </div>
+        </div>
+
+        <!-- Attributes -->
+        <div class="creator-section">
+            <h2 class="creator-section-title">Atributos</h2>
+
+            <div class="points-remaining">
+                <span class="points-label">Pontos Restantes</span>
+                <span class="points-count" id="remaining-points">27</span>
+                <button type="button" class="ai-enhance-btn" data-field="attributes" style="margin-top:0;">✨ Sugerir com IA</button>
+            </div>
+
+            <div class="attr-distribution" id="attr-distribution">
+                <div class="attr-row" data-attr="forca">
+                    <span class="attr-name">Força</span>
+                    <div class="attr-controls">
+                        <button type="button" class="attr-btn attr-minus" data-attr="forca">−</button>
+                        <span class="attr-value" id="attr-value-forca">0</span>
+                        <button type="button" class="attr-btn attr-plus" data-attr="forca">+</button>
+                    </div>
+                </div>
+                <div class="attr-row" data-attr="destreza">
+                    <span class="attr-name">Destreza</span>
+                    <div class="attr-controls">
+                        <button type="button" class="attr-btn attr-minus" data-attr="destreza">−</button>
+                        <span class="attr-value" id="attr-value-destreza">0</span>
+                        <button type="button" class="attr-btn attr-plus" data-attr="destreza">+</button>
+                    </div>
+                </div>
+                <div class="attr-row" data-attr="constituicao">
+                    <span class="attr-name">Constituição</span>
+                    <div class="attr-controls">
+                        <button type="button" class="attr-btn attr-minus" data-attr="constituicao">−</button>
+                        <span class="attr-value" id="attr-value-constituicao">0</span>
+                        <button type="button" class="attr-btn attr-plus" data-attr="constituicao">+</button>
+                    </div>
+                </div>
+                <div class="attr-row" data-attr="inteligencia">
+                    <span class="attr-name">Inteligência</span>
+                    <div class="attr-controls">
+                        <button type="button" class="attr-btn attr-minus" data-attr="inteligencia">−</button>
+                        <span class="attr-value" id="attr-value-inteligencia">0</span>
+                        <button type="button" class="attr-btn attr-plus" data-attr="inteligencia">+</button>
+                    </div>
+                </div>
+                <div class="attr-row" data-attr="sabedoria">
+                    <span class="attr-name">Sabedoria</span>
+                    <div class="attr-controls">
+                        <button type="button" class="attr-btn attr-minus" data-attr="sabedoria">−</button>
+                        <span class="attr-value" id="attr-value-sabedoria">0</span>
+                        <button type="button" class="attr-btn attr-plus" data-attr="sabedoria">+</button>
+                    </div>
+                </div>
+                <div class="attr-row" data-attr="carisma">
+                    <span class="attr-name">Carisma</span>
+                    <div class="attr-controls">
+                        <button type="button" class="attr-btn attr-minus" data-attr="carisma">−</button>
+                        <span class="attr-value" id="attr-value-carisma">0</span>
+                        <button type="button" class="attr-btn attr-plus" data-attr="carisma">+</button>
+                    </div>
+                </div>
+                <div class="attr-row" data-attr="magia">
+                    <span class="attr-name">Magia</span>
+                    <div class="attr-controls">
+                        <button type="button" class="attr-btn attr-minus" data-attr="magia">−</button>
+                        <span class="attr-value" id="attr-value-magia">0</span>
+                        <button type="button" class="attr-btn attr-plus" data-attr="magia">+</button>
+                    </div>
+                </div>
+                <div class="attr-row" data-attr="furtividade">
+                    <span class="attr-name">Furtividade</span>
+                    <div class="attr-controls">
+                        <button type="button" class="attr-btn attr-minus" data-attr="furtividade">−</button>
+                        <span class="attr-value" id="attr-value-furtividade">0</span>
+                        <button type="button" class="attr-btn attr-plus" data-attr="furtividade">+</button>
+                    </div>
+                </div>
+                <div class="attr-row" data-attr="sorte">
+                    <span class="attr-name">Sorte</span>
+                    <div class="attr-controls">
+                        <button type="button" class="attr-btn attr-minus" data-attr="sorte">−</button>
+                        <span class="attr-value" id="attr-value-sorte">0</span>
+                        <button type="button" class="attr-btn attr-plus" data-attr="sorte">+</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Starting Weapon -->
+        <div class="creator-section">
+            <h2 class="creator-section-title">Arma Inicial</h2>
+            <div class="form-group">
+                <label for="weapon-select">Selecione sua arma</label>
+                <select id="weapon-select" name="weaponId">
+                    <option value="">Carregando armas...</option>
+                </select>
+            </div>
+            <div id="weapon-details" style="display:none;"></div>
+        </div>
+
+        <!-- Starting Ability -->
+        <div class="creator-section">
+            <h2 class="creator-section-title">Habilidade Especial Inicial</h2>
+            <div class="form-group">
+                <label for="ability-select">Selecione sua habilidade</label>
+                <select id="ability-select" name="abilityId">
+                    <option value="">Carregando habilidades...</option>
+                </select>
+            </div>
+            <div id="ability-details" style="display:none;"></div>
+        </div>
+
+        <div id="error-messages"></div>
+
+        <div class="creator-actions">
+            <button type="submit" class="btn btn-primary" id="submit-btn">{% if edit_mode %}Salvar Alterações{% else %}Criar Personagem{% endif %}</button>
+            <a href="/characters" class="back-link">← Voltar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>window.__CHARACTER_CODE__ = {{ character_code|tojson|safe if character_code else 'null' }};</script>
+<script src="/static/js/character_creator.js"></script>
+{% endblock %}

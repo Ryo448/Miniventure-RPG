@@ -1,0 +1,978 @@
+[
+  {
+    "id": "guerreiro-espada-longa",
+    "nome": "Espada Longa",
+    "classeRecomendada": "Guerreiro",
+    "tipo": "espada",
+    "descricao": "Uma lâmina reta e equilibrada, forjada para cortar e defender com igual eficácia. É a arma padrão dos soldados profissionais, confiável em qualquer situação de combate corpo a corpo.",
+    "pontos": {
+      "dano": 5,
+      "precisao": 4,
+      "defesa": 3,
+      "magia": 0,
+      "furtividade": 1,
+      "carisma": 1
+    },
+    "atributoPrincipal": "força"
+  },
+  {
+    "id": "guerreiro-espada-montante",
+    "nome": "Espada Montante",
+    "classeRecomendada": "Guerreiro",
+    "tipo": "espada",
+    "descricao": "Uma espada gigante de duas mãos capaz de cortar armaduras e derrubar inimigos em um único golpe devastador. Seu peso a torna impraticável para furtividade, mas seu poder destrutivo é lendário entre os povos guerreiros.",
+    "pontos": {
+      "dano": 8,
+      "precisao": 2,
+      "defesa": 2,
+      "magia": 0,
+      "furtividade": 0,
+      "carisma": 1
+    },
+    "atributoPrincipal": "força"
+  },
+  {
+    "id": "guerreiro-espada-bastarda",
+    "nome": "Espada Bastarda",
+    "classeRecomendada": "Guerreiro",
+    "tipo": "espada",
+    "descricao": "Uma espada versátil que pode ser empunhada com uma ou duas mãos, equilibrando força e controle. Guerreiros experientes alternam entre os dois estilos conforme a necessidade do combate.",
+    "pontos": {
+      "dano": 6,
+      "precisao": 3,
+      "defesa": 3,
+      "magia": 0,
+      "furtividade": 1,
+      "carisma": 0
+    },
+    "atributoPrincipal": "força"
+  },
+  {
+    "id": "guerreiro-lanca-cavalaria",
+    "nome": "Lança de Cavalaria",
+    "classeRecomendada": "Guerreiro",
+    "tipo": "lanca",
+    "descricao": "Uma lança longa e robusta projetada para cargas montadas, mas igualmente eficaz a pé para manter inimigos à distância. Seu alcance superior permite golpear antes que o adversário se aproxime.",
+    "pontos": {
+      "dano": 5,
+      "precisao": 3,
+      "defesa": 4,
+      "magia": 0,
+      "furtividade": 0,
+      "carisma": 1
+    },
+    "atributoPrincipal": "força"
+  },
+  {
+    "id": "guerreiro-martelo-guerra",
+    "nome": "Martelo de Guerra",
+    "classeRecomendada": "Guerreiro",
+    "tipo": "martelo",
+    "descricao": "Um martelo pesado de ferro com cabeça maciça que esmaga armaduras e ossos com facilidade. O impacto devastador compensa a falta de refinamento, sendo temido por cavaleiros e bestas igualmente.",
+    "pontos": {
+      "dano": 7,
+      "precisao": 2,
+      "defesa": 2,
+      "magia": 0,
+      "furtividade": 0,
+      "carisma": 2
+    },
+    "atributoPrincipal": "força"
+  },
+  {
+    "id": "guerreiro-escudo-espada",
+    "nome": "Par Espada-Escudo",
+    "classeRecomendada": "Guerreiro",
+    "tipo": "espada",
+    "descricao": "A combinação clássica de espada e escudo que define o guerreiro de linha de frente. O escudo absorve golpes enquanto a espada contra-ataca, criando uma defesa quase impenetrável contra ataques frontais.",
+    "pontos": {
+      "dano": 4,
+      "precisao": 3,
+      "defesa": 6,
+      "magia": 0,
+      "furtividade": 0,
+      "carisma": 1
+    },
+    "atributoPrincipal": "força"
+  },
+  {
+    "id": "ladino-adaga-sombria",
+    "nome": "Adaga Sombria",
+    "classeRecomendada": "Ladino",
+    "tipo": "adaga",
+    "descricao": "Uma adaga curta e afiada com lâmina escura que absorve a luz, ideal para golpes furtivos e ataques surpresa. Seu tamanho reduzido permite escondê-la em botas, mangas ou cintos sem ser detectada.",
+    "pontos": {
+      "dano": 2,
+      "precisao": 3,
+      "defesa": 1,
+      "magia": 0,
+      "furtividade": 8,
+      "carisma": 0
+    },
+    "atributoPrincipal": "furtividade"
+  },
+  {
+    "id": "ladino-faca-arremesso",
+    "nome": "Faca de Arremesso",
+    "classeRecomendada": "Ladino",
+    "tipo": "adaga",
+    "descricao": "Facas leves e balanceadas para arremesso preciso, capazes de atingir alvos à distância com velocidade surpreendente. Ladinos as usam para eliminar sentinelas silenciosamente ou criar distrações.",
+    "pontos": {
+      "dano": 2,
+      "precisao": 5,
+      "defesa": 0,
+      "magia": 0,
+      "furtividade": 6,
+      "carisma": 0
+    },
+    "atributoPrincipal": "destreza"
+  },
+  {
+    "id": "ladino-estilete-envenenado",
+    "nome": "Estilete Envenenado",
+    "classeRecomendada": "Ladino",
+    "tipo": "adaga",
+    "descricao": "Um estilete delgado com sulco para veneno, projetado para perfurar armaduras leves e entregar toxinas diretamente na corrente sanguínea. Um único corte pode ser fatal se o veneno certo for aplicado.",
+    "pontos": {
+      "dano": 3,
+      "precisao": 3,
+      "defesa": 0,
+      "magia": 1,
+      "furtividade": 7,
+      "carisma": 0
+    },
+    "atributoPrincipal": "furtividade"
+  },
+  {
+    "id": "ladino-espada-curta",
+    "nome": "Espada Curta",
+    "classeRecomendada": "Ladino",
+    "tipo": "espada",
+    "descricao": "Uma espada leve e ágil que permite golpes rápidos e esquivas fluidas em combate próximo. Seu equilíbrio entre dano e discrição a torna a arma predileta de ladinos que não podem depender apenas de adagas.",
+    "pontos": {
+      "dano": 4,
+      "precisao": 3,
+      "defesa": 2,
+      "magia": 0,
+      "furtividade": 5,
+      "carisma": 0
+    },
+    "atributoPrincipal": "destreza"
+  },
+  {
+    "id": "ladino-arco-curto-ladino",
+    "nome": "Arco Curto de Ladino",
+    "classeRecomendada": "Ladino",
+    "tipo": "arco",
+    "descricao": "Um arco compacto e silencioso, desenhado para disparos furtivos de curta distância sem revelar a posição do atirador. Ideal para emboscadas em corredores estreitos e becos escuros.",
+    "pontos": {
+      "dano": 3,
+      "precisao": 4,
+      "defesa": 0,
+      "magia": 0,
+      "furtividade": 7,
+      "carisma": 0
+    },
+    "atributoPrincipal": "furtividade"
+  },
+  {
+    "id": "mago-cajado-arcano",
+    "nome": "Cajado Arcano",
+    "classeRecomendada": "Mago",
+    "tipo": "cajado",
+    "descricao": "Um cajado longo encantado com runas brilhantes que amplificam o poder mágico de seu portador. Serve tanto como foco para conjurações quanto como arma defensiva em situações desesperadoras.",
+    "pontos": {
+      "dano": 2,
+      "precisao": 2,
+      "defesa": 1,
+      "magia": 8,
+      "furtividade": 0,
+      "carisma": 1
+    },
+    "atributoPrincipal": "inteligência"
+  },
+  {
+    "id": "mago-cajado-elemental",
+    "nome": "Cajado Elemental",
+    "classeRecomendada": "Mago",
+    "tipo": "cajado",
+    "descricao": "Um cajado coroado por cristal que pulsa com energia elemental, permitindo ao mago canalizar fogo, gelo ou raio conforme necessário. Sua natureza instável exige concentração, mas recompensa com feitiços devastadores.",
+    "pontos": {
+      "dano": 3,
+      "precisao": 1,
+      "defesa": 1,
+      "magia": 9,
+      "furtividade": 0,
+      "carisma": 0
+    },
+    "atributoPrincipal": "inteligência"
+  },
+  {
+    "id": "mago-varinha-fogo",
+    "nome": "Varinha de Fogo",
+    "classeRecomendada": "Mago",
+    "tipo": "cajado",
+    "descricao": "Uma varinha curta e incandescente que concentra chamas em jatos precisos contra inimigos. Magos de fogo a utilizam para incendiar o campo de batalha com controle surpreendente.",
+    "pontos": {
+      "dano": 5,
+      "precisao": 3,
+      "defesa": 0,
+      "magia": 6,
+      "furtividade": 0,
+      "carisma": 1
+    },
+    "atributoPrincipal": "inteligência"
+  },
+  {
+    "id": "mago-orbe-conjuracao",
+    "nome": "Orbe de Conjuração",
+    "classeRecomendada": "Mago",
+    "tipo": "cajado",
+    "descricao": "Uma esfera flutuante de cristal puro que serve como foco para magias de invocação e controle mental. Magos avançados a usam para comandar criaturas conjuradas e manipular a mente dos inimigos.",
+    "pontos": {
+      "dano": 1,
+      "precisao": 2,
+      "defesa": 1,
+      "magia": 7,
+      "furtividade": 1,
+      "carisma": 3
+    },
+    "atributoPrincipal": "inteligência"
+  },
+  {
+    "id": "mago-cajado-gelo",
+    "nome": "Cajado de Gelo",
+    "classeRecomendada": "Mago",
+    "tipo": "cajado",
+    "descricao": "Um cajado coberto de geada permanente que congela o ar ao redor e dispara estilhaços de gelo cortante. Magos das terras gélidas o usam para retardar inimigos e criar barreiras de gelo protetoras.",
+    "pontos": {
+      "dano": 2,
+      "precisao": 2,
+      "defesa": 2,
+      "magia": 7,
+      "furtividade": 0,
+      "carisma": 1
+    },
+    "atributoPrincipal": "inteligência"
+  },
+  {
+    "id": "arqueiro-arco-longo",
+    "nome": "Arco Longo",
+    "classeRecomendada": "Arqueiro",
+    "tipo": "arco",
+    "descricao": "Um arco alto e poderoso com grande alcance, capaz de disparar flechas que cruzam o campo de batalha inteiro. Arqueiros o usam para eliminar alvos antes que se aproximem.",
+    "pontos": {
+      "dano": 4,
+      "precisao": 7,
+      "defesa": 0,
+      "magia": 0,
+      "furtividade": 2,
+      "carisma": 0
+    },
+    "atributoPrincipal": "destreza"
+  },
+  {
+    "id": "arqueiro-arco-composto",
+    "nome": "Arco Composto",
+    "classeRecomendada": "Arqueiro",
+    "tipo": "arco",
+    "descricao": "Um arco feito de múltiplas camadas de madeira e chifre, projetado para máxima penetração e precisão. Suas flechas perfuram armaduras médias com facilidade, sendo a escolha de arqueiros de elite.",
+    "pontos": {
+      "dano": 5,
+      "precisao": 6,
+      "defesa": 0,
+      "magia": 0,
+      "furtividade": 2,
+      "carisma": 0
+    },
+    "atributoPrincipal": "destreza"
+  },
+  {
+    "id": "arqueiro-besta-pesada",
+    "nome": "Besta Pesada",
+    "classeRecomendada": "Arqueiro",
+    "tipo": "besta",
+    "descricao": "Uma besta mecânica de grande potência que dispara virotes capazes de atravessar escudos e armaduras pesadas. Seu mecanismo de recarga é lento, mas cada disparo é devastador.",
+    "pontos": {
+      "dano": 6,
+      "precisao": 5,
+      "defesa": 1,
+      "magia": 0,
+      "furtividade": 1,
+      "carisma": 0
+    },
+    "atributoPrincipal": "destreza"
+  },
+  {
+    "id": "arqueiro-besta-leve",
+    "nome": "Besta Leve",
+    "classeRecomendada": "Arqueiro",
+    "tipo": "besta",
+    "descricao": "Uma besta compacta e de recarga rápida, ideal para disparos múltiplos em sequência. Arqueiros ágeis a preferem quando a velocidade do combate não permite recargas demoradas.",
+    "pontos": {
+      "dano": 3,
+      "precisao": 6,
+      "defesa": 0,
+      "magia": 0,
+      "furtividade": 3,
+      "carisma": 0
+    },
+    "atributoPrincipal": "destreza"
+  },
+  {
+    "id": "arqueiro-arco-vidro",
+    "nome": "Arco de Vidro-Élvico",
+    "classeRecomendada": "Arqueiro",
+    "tipo": "arco",
+    "descricao": "Um arco feito de cristal élfico que refrata a luz e dispara flechas luminosas de precisão sobrenatural. Diz-se que elfos o forjam sob lua cheia, e ele jamais erra um alvo que o coração do atirador deseja.",
+    "pontos": {
+      "dano": 4,
+      "precisao": 8,
+      "defesa": 0,
+      "magia": 1,
+      "furtividade": 1,
+      "carisma": 0
+    },
+    "atributoPrincipal": "destreza"
+  },
+  {
+    "id": "clerigo-martelo-sagrado",
+    "nome": "Martelo Sagrado",
+    "classeRecomendada": "Clérigo",
+    "tipo": "martelo",
+    "descricao": "Um martelo de prata abençoado por divindades, emite luz suave ao golpear mortos-vivos e criaturas profanas. Clérigos o usam tanto para esmagar o mal quanto para canalizar curas divinas.",
+    "pontos": {
+      "dano": 4,
+      "precisao": 3,
+      "defesa": 2,
+      "magia": 4,
+      "furtividade": 0,
+      "carisma": 1
+    },
+    "atributoPrincipal": "sabedoria"
+  },
+  {
+    "id": "clerigo-maca-bencao",
+    "nome": "Maça da Bênção",
+    "classeRecomendada": "Clérigo",
+    "tipo": "clava",
+    "descricao": "Uma maça cerimonial coberta de símbolos sagrados que brilham durante orações de cura. Cada golpe carrega a força da fé, sendo tão eficaz contra mortos-vivos quanto contra inimigos terrenos.",
+    "pontos": {
+      "dano": 3,
+      "precisao": 3,
+      "defesa": 2,
+      "magia": 5,
+      "furtividade": 0,
+      "carisma": 2
+    },
+    "atributoPrincipal": "sabedoria"
+  },
+  {
+    "id": "clerigo-cajado-fe",
+    "nome": "Cajado da Fé",
+    "classeRecomendada": "Clérigo",
+    "tipo": "cajado",
+    "descricao": "Um cajado de carvalho ornamentado com escrituras divinas que amplificam magias de cura e proteção. Clérigos devotos o utilizam como foco principal para conjurar barreiras e restaurar ferimentos.",
+    "pontos": {
+      "dano": 2,
+      "precisao": 2,
+      "defesa": 3,
+      "magia": 6,
+      "furtividade": 0,
+      "carisma": 2
+    },
+    "atributoPrincipal": "sabedoria"
+  },
+  {
+    "id": "clerigo-espada-justica",
+    "nome": "Espada da Justiça",
+    "classeRecomendada": "Clérigo",
+    "tipo": "espada",
+    "descricao": "Uma espada de lâmina reta com inscrições divinas na guarda, forjada para julgar os ímpios com igual força e devoção. Combina o dano cortante de uma espada com o poder sagrado de um artefato abençoado.",
+    "pontos": {
+      "dano": 5,
+      "precisao": 3,
+      "defesa": 3,
+      "magia": 2,
+      "furtividade": 0,
+      "carisma": 1
+    },
+    "atributoPrincipal": "sabedoria"
+  },
+  {
+    "id": "clerigo-escudo-relicario",
+    "nome": "Escudo Relicário",
+    "classeRecomendada": "Clérigo",
+    "tipo": "clava",
+    "descricao": "Um escudo pesado com relicário embutido que emite aura protetora quando o clérigo ora em seu nome. Serve tanto para bloquear ataques quanto para amplificar magias de proteção em área.",
+    "pontos": {
+      "dano": 1,
+      "precisao": 2,
+      "defesa": 6,
+      "magia": 4,
+      "furtividade": 0,
+      "carisma": 1
+    },
+    "atributoPrincipal": "sabedoria"
+  },
+  {
+    "id": "barbaro-machado-batalha",
+    "nome": "Machado de Batalha",
+    "classeRecomendada": "Bárbaro",
+    "tipo": "martelo",
+    "descricao": "Um machado duplo de lâminas largas e pesadas, forjado para cortar e decepar com brutalidade. Bárbaros o brandem em ataques circulares que atingem múltiplos inimigos ao mesmo tempo.",
+    "pontos": {
+      "dano": 7,
+      "precisao": 2,
+      "defesa": 1,
+      "magia": 0,
+      "furtividade": 0,
+      "carisma": 2
+    },
+    "atributoPrincipal": "força"
+  },
+  {
+    "id": "barbaro-clava-osso",
+    "nome": "Clava de Osso",
+    "classeRecomendada": "Bárbaro",
+    "tipo": "clava",
+    "descricao": "Uma clava rudimentar feita do fêmur de uma besta colossal, cravejada de espinhos de metal. Bárbaros primitivos a usam para esmagar crânios com fúria que civilização alguma pode conter.",
+    "pontos": {
+      "dano": 6,
+      "precisao": 2,
+      "defesa": 2,
+      "magia": 0,
+      "furtividade": 0,
+      "carisma": 3
+    },
+    "atributoPrincipal": "força"
+  },
+  {
+    "id": "barbaro-machado-grande-guerra",
+    "nome": "Machado Grande de Guerra",
+    "classeRecomendada": "Bárbaro",
+    "tipo": "martelo",
+    "descricao": "O maior machado forjável por mãos mortais, exigindo força sobre-humana para ser erguido. Quando um bárbaro em fúria o brande, um único golpe pode rachar o chão e derrubar portões de castelo.",
+    "pontos": {
+      "dano": 9,
+      "precisao": 1,
+      "defesa": 1,
+      "magia": 0,
+      "furtividade": 0,
+      "carisma": 2
+    },
+    "atributoPrincipal": "força"
+  },
+  {
+    "id": "barbaro-lanca-bruta",
+    "nome": "Lança Bruta",
+    "classeRecomendada": "Bárbaro",
+    "tipo": "lanca",
+    "descricao": "Uma lança rústica de tronco inteiro com ponta de ferro bruto, usada para ataques de investida devastadores. Bárbaros a arremessam contra inimigos em fuga ou a usam para traspassar bestas gigantes.",
+    "pontos": {
+      "dano": 6,
+      "precisao": 2,
+      "defesa": 2,
+      "magia": 0,
+      "furtividade": 1,
+      "carisma": 1
+    },
+    "atributoPrincipal": "força"
+  },
+  {
+    "id": "barbaro-espada-grande-barbara",
+    "nome": "Espada Grande Bárbara",
+    "classeRecomendada": "Bárbaro",
+    "tipo": "espada",
+    "descricao": "Uma espada tosca e descomunal, mais parecida com uma lâmina de metal retalhada do que com arma forjada. Sua falta de refinamento é compensada pela devastação que causa quando empunhada com fúria.",
+    "pontos": {
+      "dano": 8,
+      "precisao": 2,
+      "defesa": 1,
+      "magia": 0,
+      "furtividade": 0,
+      "carisma": 2
+    },
+    "atributoPrincipal": "força"
+  },
+  {
+    "id": "paladino-espada-sagrada",
+    "nome": "Espada Sagrada",
+    "classeRecomendada": "Paladino",
+    "tipo": "espada",
+    "descricao": "Uma espada forjada em metal celestial cuja lâmina irradia luz divina contra criaturas das trevas. Paladinos a brandem como símbolo de seu juramento, cortando o mal como a aurora dissipa a treva.",
+    "pontos": {
+      "dano": 5,
+      "precisao": 4,
+      "defesa": 3,
+      "magia": 2,
+      "furtividade": 0,
+      "carisma": 1
+    },
+    "atributoPrincipal": "sabedoria"
+  },
+  {
+    "id": "paladino-martelo-purificador",
+    "nome": "Martelo Purificador",
+    "classeRecomendada": "Paladino",
+    "tipo": "martelo",
+    "descricao": "Um martelo banhado em água benta e forjado com prata sagrada, emite faíscas douradas ao impacto contra mortos-vivos. Paladinos o utilizam para esmagar o mal e proteger os inocentes com força inabalável.",
+    "pontos": {
+      "dano": 5,
+      "precisao": 3,
+      "defesa": 3,
+      "magia": 2,
+      "furtividade": 0,
+      "carisma": 2
+    },
+    "atributoPrincipal": "sabedoria"
+  },
+  {
+    "id": "paladino-lanca-divina",
+    "nome": "Lança Divina",
+    "classeRecomendada": "Paladino",
+    "tipo": "lanca",
+    "descricao": "Uma lança de prata com ponta em formato de cruz que canaliza energia sagrada através de sua lâmina. Ao ser arremessada contra demônios, brilha com ira divina e raramente erra o alvo profano.",
+    "pontos": {
+      "dano": 4,
+      "precisao": 4,
+      "defesa": 2,
+      "magia": 3,
+      "furtividade": 0,
+      "carisma": 2
+    },
+    "atributoPrincipal": "sabedoria"
+  },
+  {
+    "id": "paladino-espada-julgamento",
+    "nome": "Espada do Julgamento",
+    "classeRecomendada": "Paladino",
+    "tipo": "espada",
+    "descricao": "Uma espada de duas mãos gravada com mandamentos divinos que brilha intensamente quando o paladino pronuncia seu julgamento. Seu dano aumenta contra inimigos marcados como ímpios pelo tribunal celestial.",
+    "pontos": {
+      "dano": 6,
+      "precisao": 3,
+      "defesa": 2,
+      "magia": 3,
+      "furtividade": 0,
+      "carisma": 1
+    },
+    "atributoPrincipal": "sabedoria"
+  },
+  {
+    "id": "paladino-escudo-aureo",
+    "nome": "Escudo Áureo",
+    "classeRecomendada": "Paladino",
+    "tipo": "clava",
+    "descricao": "Um escudo banhado a ouro que gera um campo de luz protetora ao redor do paladino e seus aliados próximos. Paladinos o carregam como prova de devoção, e sua presença no campo de batalha inspira coragem.",
+    "pontos": {
+      "dano": 1,
+      "precisao": 2,
+      "defesa": 5,
+      "magia": 3,
+      "furtividade": 0,
+      "carisma": 3
+    },
+    "atributoPrincipal": "sabedoria"
+  },
+  {
+    "id": "necromante-cajado-morte",
+    "nome": "Cajado da Morte",
+    "classeRecomendada": "Necromante",
+    "tipo": "cajado",
+    "descricao": "Um cajado de ébano cravejado de crânios que pulsam com energia negra, capaz de comandar mortos-vivos e drenar vida. Necromantes poderosos o usam para erguer exércitos de trevas e espalhar pestilência.",
+    "pontos": {
+      "dano": 3,
+      "precisao": 1,
+      "defesa": 1,
+      "magia": 9,
+      "furtividade": 2,
+      "carisma": 0
+    },
+    "atributoPrincipal": "inteligência"
+  },
+  {
+    "id": "necromante-foice-sombria",
+    "nome": "Foice Sombria",
+    "classeRecomendada": "Necromante",
+    "tipo": "adaga",
+    "descricao": "Uma foice curva de lâmina negra que ceifa a alma dos vivos com cada corte, alimentando o necromante com energia vital roubada. Diz-se que foi forjada nas forjas do submundo por um lich artesão.",
+    "pontos": {
+      "dano": 4,
+      "precisao": 2,
+      "defesa": 1,
+      "magia": 6,
+      "furtividade": 3,
+      "carisma": 0
+    },
+    "atributoPrincipal": "inteligência"
+  },
+  {
+    "id": "necromante-orbe-negra",
+    "nome": "Orbe Negra",
+    "classeRecomendada": "Necromante",
+    "tipo": "cajado",
+    "descricao": "Uma esfera de obsidiana flutuante que absorve a luz ao redor e invoca espíritos atormentados para atacar inimigos. Necromantes a usam como foco para maldições e rituais de invocação profana.",
+    "pontos": {
+      "dano": 2,
+      "precisao": 2,
+      "defesa": 2,
+      "magia": 8,
+      "furtividade": 1,
+      "carisma": 0
+    },
+    "atributoPrincipal": "inteligência"
+  },
+  {
+    "id": "necromante-daga-ritual",
+    "nome": "Adaga Ritual",
+    "classeRecomendada": "Necromante",
+    "tipo": "adaga",
+    "descricao": "Uma adaga cerimonial de obsidiana afiada como navalha, usada em sacrifícios para alimentar magias negras. Seu fio corta o próprio espírito, causando dor que transcende o corpo físico.",
+    "pontos": {
+      "dano": 3,
+      "precisao": 3,
+      "defesa": 0,
+      "magia": 5,
+      "furtividade": 4,
+      "carisma": 0
+    },
+    "atributoPrincipal": "inteligência"
+  },
+  {
+    "id": "necromante-cajado-dreno",
+    "nome": "Cajado de Dreno Vital",
+    "classeRecomendada": "Necromante",
+    "tipo": "cajado",
+    "descricao": "Um cajado que suga a essência vital de tudo que toca, transformando o dreno em poder mágico para seu dono. Quanto mais inimigos forem drenados, mais poderoso o necromante se torna.",
+    "pontos": {
+      "dano": 2,
+      "precisao": 1,
+      "defesa": 1,
+      "magia": 8,
+      "furtividade": 1,
+      "carisma": 1
+    },
+    "atributoPrincipal": "inteligência"
+  },
+  {
+    "id": "cacador-arco-caca",
+    "nome": "Arco de Caça",
+    "classeRecomendada": "Caçador",
+    "tipo": "arco",
+    "descricao": "Um arco rústico de madeira nobre e nervos de animal, equilibrando alcance e manobrabilidade. Caçadores o apreciam por sua versatilidade em florestas densas e planícies abertas igualmente.",
+    "pontos": {
+      "dano": 4,
+      "precisao": 5,
+      "defesa": 0,
+      "magia": 0,
+      "furtividade": 4,
+      "carisma": 0
+    },
+    "atributoPrincipal": "destreza"
+  },
+  {
+    "id": "cacador-lanca-presa",
+    "nome": "Lança de Presa",
+    "classeRecomendada": "Caçador",
+    "tipo": "lanca",
+    "descricao": "Uma lança curta e resistente usada para caçar bestas grandes, equilibrando ataque e defesa no confronto direto com monstros. Caçadores a cravam no flanco das presas antes que elas possam reagir.",
+    "pontos": {
+      "dano": 5,
+      "precisao": 3,
+      "defesa": 2,
+      "magia": 0,
+      "furtividade": 2,
+      "carisma": 1
+    },
+    "atributoPrincipal": "destreza"
+  },
+  {
+    "id": "cacador-faca-desfessoar",
+    "nome": "Faca de Desossear",
+    "classeRecomendada": "Caçador",
+    "tipo": "adaga",
+    "descricao": "Uma faca curva de lâmina larga, projetada para separar carne de osso com eficiência brutal. No combate, serve para golpes circulares que desarmam inimigos e abrem feridas difíceis de curar.",
+    "pontos": {
+      "dano": 3,
+      "precisao": 4,
+      "defesa": 1,
+      "magia": 0,
+      "furtividade": 5,
+      "carisma": 0
+    },
+    "atributoPrincipal": "destreza"
+  },
+  {
+    "id": "cacador-besta-repeticao",
+    "nome": "Besta de Repetição",
+    "classeRecomendada": "Caçador",
+    "tipo": "besta",
+    "descricao": "Uma besta com carregador de múltiplos virotes que permite disparos rápidos consecutivos sem recarga manual. Caçadores a usam para abater criaturas velozes antes que desapareçam entre as árvores.",
+    "pontos": {
+      "dano": 4,
+      "precisao": 6,
+      "defesa": 0,
+      "magia": 0,
+      "furtividade": 3,
+      "carisma": 0
+    },
+    "atributoPrincipal": "destreza"
+  },
+  {
+    "id": "cacador-funda-chumbo",
+    "nome": "Funda de Chumbo",
+    "classeRecomendada": "Caçador",
+    "tipo": "funda",
+    "descricao": "Uma funda de couro reforçado que arremessa projéteis de chumbo com força surpreendente, derrubando aves em voo e atordoando feras. Caçadores primitivos a dominam desde a infância como brincadeira que se torna letal.",
+    "pontos": {
+      "dano": 3,
+      "precisao": 5,
+      "defesa": 0,
+      "magia": 0,
+      "furtividade": 5,
+      "carisma": 0
+    },
+    "atributoPrincipal": "destreza"
+  },
+  {
+    "id": "monge-punhos-ferro",
+    "nome": "Punhos de Ferro",
+    "classeRecomendada": "Monge",
+    "tipo": "mao",
+    "descricao": "Luvas de couro reforçado com placas de ferro nos nós dos dedos, que ampliam o impacto dos golpes marciais. Monges as usam para desferir socos que quebram madeira e amassam metal.",
+    "pontos": {
+      "dano": 4,
+      "precisao": 5,
+      "defesa": 2,
+      "magia": 0,
+      "furtividade": 5,
+      "carisma": 0
+    },
+    "atributoPrincipal": "destreza"
+  },
+  {
+    "id": "monge-nunchaku",
+    "nome": "Nunchaku",
+    "classeRecomendada": "Monge",
+    "tipo": "mao",
+    "descricao": "Duas barras de madeira dura conectadas por corrente de aço, brandas em movimentos circulares de velocidade desorientadora. Monges treinam anos para dominá-lo, transformando cada giro em golpe certeiro.",
+    "pontos": {
+      "dano": 3,
+      "precisao": 4,
+      "defesa": 3,
+      "magia": 0,
+      "furtividade": 4,
+      "carisma": 0
+    },
+    "atributoPrincipal": "destreza"
+  },
+  {
+    "id": "monge-bastao-monge",
+    "nome": "Bastão do Monge",
+    "classeRecomendada": "Monge",
+    "tipo": "cajado",
+    "descricao": "Um bastão longo de bambu leve e resistente, usado para defesa e ataque com fluidez graciosa. Monges o giram para desviar projéteis e golpear pontos vitais com a precisão de uma agulha.",
+    "pontos": {
+      "dano": 3,
+      "precisao": 4,
+      "defesa": 4,
+      "magia": 0,
+      "furtividade": 3,
+      "carisma": 0
+    },
+    "atributoPrincipal": "destreza"
+  },
+  {
+    "id": "monge-katana-vento",
+    "nome": "Katana do Vento",
+    "classeRecomendada": "Monge",
+    "tipo": "katana",
+    "descricao": "Uma lâmina curva e incrivelmente leve, forjada por mestres do oriente que dobram o aço mil vezes. Monges a empunham com velocidade que o olho mal acompanha, cortando o ar antes que o inimigo perceba.",
+    "pontos": {
+      "dano": 5,
+      "precisao": 5,
+      "defesa": 2,
+      "magia": 0,
+      "furtividade": 3,
+      "carisma": 1
+    },
+    "atributoPrincipal": "destreza"
+  },
+  {
+    "id": "monge-garras-tigre",
+    "nome": "Garras de Tigre",
+    "classeRecomendada": "Monge",
+    "tipo": "mao",
+    "descricao": "Manoplas de metal com garras curvas que imitam as presas do tigre, usadas para golpes rasgantes e escalada. Monges do estilo do tigre as usam para rasgar armaduras e escalar superfícies verticais.",
+    "pontos": {
+      "dano": 4,
+      "precisao": 4,
+      "defesa": 1,
+      "magia": 0,
+      "furtividade": 4,
+      "carisma": 0
+    },
+    "atributoPrincipal": "destreza"
+  },
+  {
+    "id": "bardo-espada-raposa",
+    "nome": "Espada da Raposa",
+    "classeRecomendada": "Bardo",
+    "tipo": "espada",
+    "descricao": "Uma espada fina e elegante de lâmina gravada com notas musicais, feita para duelos teatrais e floreios dramáticos. Bardos a usam tanto para lutar quanto para entreter, transformando combate em espetáculo.",
+    "pontos": {
+      "dano": 3,
+      "precisao": 4,
+      "defesa": 2,
+      "magia": 1,
+      "furtividade": 2,
+      "carisma": 4
+    },
+    "atributoPrincipal": "carisma"
+  },
+  {
+    "id": "bardo-flauta-batalha",
+    "nome": "Flauta de Batalha",
+    "classeRecomendada": "Bardo",
+    "tipo": "cajado",
+    "descricao": "Uma flauta longa de prata encantada que dispara notas sonoras capazes de cortar e atordoar inimigos. Bardos a tocam para conjurar magias de encantamento enquanto golpeam com ela como cajado.",
+    "pontos": {
+      "dano": 2,
+      "precisao": 3,
+      "defesa": 1,
+      "magia": 4,
+      "furtividade": 1,
+      "carisma": 5
+    },
+    "atributoPrincipal": "carisma"
+  },
+  {
+    "id": "bardo-adaga-dramatica",
+    "nome": "Adaga Dramática",
+    "classeRecomendada": "Bardo",
+    "tipo": "adaga",
+    "descricao": "Uma adaga ornamentada com joias que brilham sob a luz do palco, perfeita para assassinatos teatrais e números de ilusionismo. Bardos a escondem nas mangas e a revelam no momento mais dramático.",
+    "pontos": {
+      "dano": 2,
+      "precisao": 4,
+      "defesa": 1,
+      "magia": 1,
+      "furtividade": 4,
+      "carisma": 4
+    },
+    "atributoPrincipal": "carisma"
+  },
+  {
+    "id": "bardo-lira-encantada",
+    "nome": "Lira Encantada",
+    "classeRecomendada": "Bardo",
+    "tipo": "cajado",
+    "descricao": "Uma lira de madeira antiga cujas cordas vibram com magia quando tocadas, criando ondas sonoras que ferem e encantam. Bardos mestres a usam para inspirar aliados e desmoralar inimigos com melodias de poder.",
+    "pontos": {
+      "dano": 1,
+      "precisao": 2,
+      "defesa": 2,
+      "magia": 4,
+      "furtividade": 0,
+      "carisma": 7
+    },
+    "atributoPrincipal": "carisma"
+  },
+  {
+    "id": "bardo-espada-cortejo",
+    "nome": "Espada de Cortejo",
+    "classeRecomendada": "Bardo",
+    "tipo": "espada",
+    "descricao": "Uma espada decorativa com punho de ouro e rubi, feita mais para impressionar do que para matar,mas afiada o bastante para fazê-lo quando necessário. Bardos a exibem em duelos de honra e serenatas perigosas.",
+    "pontos": {
+      "dano": 3,
+      "precisao": 3,
+      "defesa": 2,
+      "magia": 1,
+      "furtividade": 1,
+      "carisma": 6
+    },
+    "atributoPrincipal": "carisma"
+  },
+  {
+    "id": "assassino-adaga-ceifadora",
+    "nome": "Adaga Ceifadora",
+    "classeRecomendada": "Assassino",
+    "tipo": "adaga",
+    "descricao": "Uma adaga de lâmina negra e sem reflexo, forjada com metal que absorve luz e som. Assassinos a usam para golpes mortais silenciosos, e o corpo da vítima é encontrado antes que o grito saia da garganta.",
+    "pontos": {
+      "dano": 4,
+      "precisao": 4,
+      "defesa": 0,
+      "magia": 0,
+      "furtividade": 8,
+      "carisma": 0
+    },
+    "atributoPrincipal": "furtividade"
+  },
+  {
+    "id": "assassino-gume-sombra",
+    "nome": "Gume da Sombra",
+    "classeRecomendada": "Assassino",
+    "tipo": "katana",
+    "descricao": "Uma katana de lâmina escura que se dissolve nas sombras, aparecendo apenas no instante do corte fatal. Assassinos de elite a usam para eliminar alvos protegidos antes que os guardas percebam a ameaça.",
+    "pontos": {
+      "dano": 4,
+      "precisao": 3,
+      "defesa": 1,
+      "magia": 1,
+      "furtividade": 7,
+      "carisma": 0
+    },
+    "atributoPrincipal": "furtividade"
+  },
+  {
+    "id": "assassino-fio-garrafa",
+    "nome": "Fio de Garrafa",
+    "classeRecomendada": "Assassino",
+    "tipo": "adaga",
+    "descricao": "Um fragmento de vidro afiado como navalha, envolto em pano e mergulhado em veneno mortal. Assassinos de beco o usam quando nenhuma outra arma está disponível, e um corte basta para matar.",
+    "pontos": {
+      "dano": 3,
+      "precisao": 2,
+      "defesa": 0,
+      "magia": 0,
+      "furtividade": 8,
+      "carisma": 0
+    },
+    "atributoPrincipal": "furtividade"
+  },
+  {
+    "id": "assassino-besta-mao",
+    "nome": "Besta de Mão",
+    "classeRecomendada": "Assassino",
+    "tipo": "besta",
+    "descricao": "Uma besta minúscula que cabe na palma da mão, disparando virotes envenenados com um zumbido silencioso. Assassinos a usam para eliminar alvos a distância sem levantar suspeitas, escondendo-a sob as vestes.",
+    "pontos": {
+      "dano": 3,
+      "precisao": 5,
+      "defesa": 0,
+      "magia": 0,
+      "furtividade": 7,
+      "carisma": 0
+    },
+    "atributoPrincipal": "furtividade"
+  },
+  {
+    "id": "assassino-arma-veneno",
+    "nome": "Agulha Envenenada",
+    "classeRecomendada": "Assassino",
+    "tipo": "adaga",
+    "descricao": "Uma agulha longa e oca que injeta veneno diretamente na corrente sanguínea da vítima com um toque. Assassinos a escondem em anéis, pentes ou colares, e um mero arranhão basta para a morte silenciosa.",
+    "pontos": {
+      "dano": 2,
+      "precisao": 3,
+      "defesa": 0,
+      "magia": 1,
+      "furtividade": 9,
+      "carisma": 0
+    },
+    "atributoPrincipal": "furtividade"
+  }
+]

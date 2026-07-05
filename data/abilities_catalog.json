@@ -1,0 +1,302 @@
+[
+  {
+    "id": "golpe-devastador",
+    "nome": "Golpe Devastador",
+    "classeRecomendada": "Guerreiro",
+    "tipo": "active",
+    "descricao": "Concentra toda a forca em um unico golpe que derruba inimigos. Causa dano extra e pode atordoar.",
+    "cooldownTurnos": 3,
+    "atributoPrincipal": "forca",
+    "pontos": { "dano": 5, "cura": 0, "duracao": 1 }
+  },
+  {
+    "id": "defesa-de-ferro",
+    "nome": "Defesa de Ferro",
+    "classeRecomendada": "Guerreiro",
+    "tipo": "active",
+    "descricao": "Posiciona o escudo para bloquear todos os ataques do proximo turno, reduzindo o dano recebido pela metade.",
+    "cooldownTurnos": 4,
+    "atributoPrincipal": "constituicao",
+    "pontos": { "dano": 0, "cura": 0, "duracao": 1 }
+  },
+  {
+    "id": "furia-barbara",
+    "nome": "Furia Barbarica",
+    "classeRecomendada": "Barbaro",
+    "tipo": "active",
+    "descricao": "Entra em estado de furia, dobrando o dano causado por 3 turnos, mas recebe dano extra neste periodo.",
+    "cooldownTurnos": 5,
+    "atributoPrincipal": "forca",
+    "pontos": { "dano": 3, "cura": 0, "duracao": 3 }
+  },
+  {
+    "id": "regeneracao",
+    "nome": "Regeneracao",
+    "classeRecomendada": "Barbaro",
+    "tipo": "active",
+    "descricao": "Recupera 30% de vida instantaneamente através da propria forca bruta.",
+    "cooldownTurnos": 5,
+    "atributoPrincipal": "constituicao",
+    "pontos": { "dano": 0, "cura": 30, "duracao": 0 }
+  },
+  {
+    "id": "sombra-furtiva",
+    "nome": "Sombra Furante",
+    "classeRecomendada": "Ladino",
+    "tipo": "active",
+    "descricao": "Mistura-se nas sombras tornando-se invisivel por um turno. O proximo ataque causa dano triplo.",
+    "cooldownTurnos": 4,
+    "atributoPrincipal": "furtividade",
+    "pontos": { "dano": 3, "cura": 0, "duracao": 1 }
+  },
+  {
+    "id": "golpe-traicao",
+    "nome": "Golpe de Traicao",
+    "classeRecomendada": "Ladino",
+    "tipo": "active",
+    "descricao": "Aproveita-se de uma brecha na guarda do inimigo para um ataque traiçoeiro que ignora armadura.",
+    "cooldownTurnos": 3,
+    "atributoPrincipal": "destreza",
+    "pontos": { "dano": 6, "cura": 0, "duracao": 0 }
+  },
+  {
+    "id": "bola-de-fogo",
+    "nome": "Bola de Fogo",
+    "classeRecomendada": "Mago",
+    "tipo": "active",
+    "descricao": "Conjura uma explosao flamejante que atinge todos os inimigos em um raio de 5 metros.",
+    "cooldownTurnos": 4,
+    "atributoPrincipal": "magia",
+    "pontos": { "dano": 7, "cura": 0, "duracao": 0 }
+  },
+  {
+    "id": "escudo-arcano",
+    "nome": "Escudo Arcano",
+    "classeRecomendada": "Mago",
+    "tipo": "active",
+    "descricao": "Cria uma barreira magica que absorve o proximo ataque recebido completamente.",
+    "cooldownTurnos": 3,
+    "atributoPrincipal": "magia",
+    "pontos": { "dano": 0, "cura": 0, "duracao": 2 }
+  },
+  {
+    "id": "toque-gelado",
+    "nome": "Toque Gelado",
+    "classeRecomendada": "Mago",
+    "tipo": "active",
+    "descricao": "Toca o inimigo prendendo-o em gelo. O alvo fica impossibilitado de agir por um turno.",
+    "cooldownTurnos": 4,
+    "atributoPrincipal": "magia",
+    "pontos": { "dano": 4, "cura": 0, "duracao": 1 }
+  },
+  {
+    "id": "curar-ferimentos",
+    "nome": "Curar Ferimentos",
+    "classeRecomendada": "Clerigo",
+    "tipo": "active",
+    "descricao": "Canaliza energia divina para curar 40% da vida do alvo tocado.",
+    "cooldownTurnos": 3,
+    "atributoPrincipal": "sabedoria",
+    "pontos": { "dano": 0, "cura": 40, "duracao": 0 }
+  },
+  {
+    "id": "bencao-sagrada",
+    "nome": "Bencao Sagrada",
+    "classeRecomendada": "Clerigo",
+    "tipo": "active",
+    "descricao": "Bencao divina que aumenta a resistencia e dano de todo o grupo por 3 turnos.",
+    "cooldownTurnos": 5,
+    "atributoPrincipal": "sabedoria",
+    "pontos": { "dano": 1, "cura": 10, "duracao": 3 }
+  },
+  {
+    "id": "expulsar-mortos",
+    "nome": "Expulsar Mortos-Vivos",
+    "classeRecomendada": "Clerigo",
+    "tipo": "active",
+    "descricao": "Emana luz divina que causa dano massivo a mortos-vivos e os afasta.",
+    "cooldownTurnos": 3,
+    "atributoPrincipal": "sabedoria",
+    "pontos": { "dano": 8, "cura": 0, "duracao": 0 }
+  },
+  {
+    "id": "chuva-flechas",
+    "nome": "Chuva de Flechas",
+    "classeRecomendada": "Arqueiro",
+    "tipo": "active",
+    "descricao": "Dispara uma cascata de flechas que atinge todos os inimigos visiveis.",
+    "cooldownTurnos": 4,
+    "atributoPrincipal": "destreza",
+    "pontos": { "dano": 5, "cura": 0, "duracao": 0 }
+  },
+  {
+    "id": "tiro-preciso",
+    "nome": "Tiro Preciso",
+    "classeRecomendada": "Arqueiro",
+    "tipo": "active",
+    "descricao": "Mira cuidadosamente em um ponto vital. Se acertar, causa dano triplo.",
+    "cooldownTurnos": 3,
+    "atributoPrincipal": "destreza",
+    "pontos": { "dano": 3, "cura": 0, "duracao": 0 }
+  },
+  {
+    "id": "disparo-rapido",
+    "nome": "Disparo Rapido",
+    "classeRecomendada": "Arqueiro",
+    "tipo": "active",
+    "descricao": "Dispara duas flechas no mesmo turno contra um unico alvo.",
+    "cooldownTurnos": 2,
+    "atributoPrincipal": "destreza",
+    "pontos": { "dano": 4, "cura": 0, "duracao": 0 }
+  },
+  {
+    "id": "arca-cura",
+    "nome": "Arca de Cura",
+    "classeRecomendada": "Caçador",
+    "tipo": "active",
+    "descricao": "Usa ervas naturais para curar 20% de vida propria ou de um aliado.",
+    "cooldownTurnos": 2,
+    "atributoPrincipal": "sabedoria",
+    "pontos": { "dano": 0, "cura": 20, "duracao": 0 }
+  },
+  {
+    "id": "armadilha-caçador",
+    "nome": "Armadilha de Caçador",
+    "classeRecomendada": "Caçador",
+    "tipo": "active",
+    "descricao": "Coloca uma armadilha que imobiliza o primeiro inimigo que passar por 2 turnos.",
+    "cooldownTurnos": 4,
+    "atributoPrincipal": "destreza",
+    "pontos": { "dano": 3, "cura": 0, "duracao": 2 }
+  },
+  {
+    "id": "sopro-dragonico",
+    "nome": "Sopro Dragonico",
+    "classeRecomendada": "Paladino",
+    "tipo": "active",
+    "descricao": "Exhala energia elemental que causa dano a todos os inimigos em cone.",
+    "cooldownTurnos": 5,
+    "atributoPrincipal": "magia",
+    "pontos": { "dano": 6, "cura": 0, "duracao": 0 }
+  },
+  {
+    "id": "imposicao-maos",
+    "nome": "Imposição de Maos",
+    "classeRecomendada": "Paladino",
+    "tipo": "active",
+    "descricao": "Impoe maos sagradas sobre o alvo curando 25% de vida e removendo efeitos negativos.",
+    "cooldownTurnos": 3,
+    "atributoPrincipal": "sabedoria",
+    "pontos": { "dano": 0, "cura": 25, "duracao": 0 }
+  },
+  {
+    "id": "conjurar-esqueleto",
+    "nome": "Conjurar Esqueleto",
+    "classeRecomendada": "Necromante",
+    "tipo": "active",
+    "descricao": "Ergue um esqueleto das profundezas para lutar ao seu lado por 3 turnos.",
+    "cooldownTurnos": 5,
+    "atributoPrincipal": "magia",
+    "pontos": { "dano": 4, "cura": 0, "duracao": 3 }
+  },
+  {
+    "id": "dreno-vital",
+    "nome": "Dreno Vital",
+    "classeRecomendada": "Necromante",
+    "tipo": "active",
+    "descricao": "Drena 15% de vida do inimigo curando a mesma quantidade para si.",
+    "cooldownTurnos": 3,
+    "atributoPrincipal": "magia",
+    "pontos": { "dano": 3, "cura": 15, "duracao": 0 }
+  },
+  {
+    "id": "maldicao-sombria",
+    "nome": "Maldicao Sombria",
+    "classeRecomendada": "Necromante",
+    "tipo": "active",
+    "descricao": "Lanca uma maldicao que reduz o dano causado pelo inimigo pela metade por 3 turnos.",
+    "cooldownTurnos": 4,
+    "atributoPrincipal": "magia",
+    "pontos": { "dano": 0, "cura": 0, "duracao": 3 }
+  },
+  {
+    "id": "inspiracao-bardo",
+    "nome": "Inspiracao do Bardo",
+    "classeRecomendada": "Bardo",
+    "tipo": "active",
+    "descricao": "Toca uma melodia inspiradora que aumenta o dano de todos os aliados por 3 turnos.",
+    "cooldownTurnos": 4,
+    "atributoPrincipal": "carisma",
+    "pontos": { "dano": 2, "cura": 0, "duracao": 3 }
+  },
+  {
+    "id": "palavra-curativa",
+    "nome": "Palavra Curativa",
+    "classeRecomendada": "Bardo",
+    "tipo": "active",
+    "descricao": "Canta palavras de restauração que curam 25% da vida do alvo.",
+    "cooldownTurnos": 3,
+    "atributoPrincipal": "carisma",
+    "pontos": { "dano": 0, "cura": 25, "duracao": 0 }
+  },
+  {
+    "id": "encanto-fascinante",
+    "nome": "Encanto Fascinante",
+    "classeRecomendada": "Bardo",
+    "tipo": "active",
+    "descricao": "Fascina um inimigo que deixa de atacar por um turno e pode unir-se ao grupo brevemente.",
+    "cooldownTurnos": 5,
+    "atributoPrincipal": "carisma",
+    "pontos": { "dano": 0, "cura": 0, "duracao": 1 }
+  },
+  {
+    "id": "golpe-mortal",
+    "nome": "Golpe Mortal",
+    "classeRecomendada": "Assassino",
+    "tipo": "active",
+    "descricao": "Aproveita-se de um descuido para tentar um golpe letal. Se bem-sucedido, dano enorme.",
+    "cooldownTurnos": 5,
+    "atributoPrincipal": "furtividade",
+    "pontos": { "dano": 12, "cura": 0, "duracao": 0 }
+  },
+  {
+    "id": "veneno-letargo",
+    "nome": "Veneno de Letargo",
+    "classeRecomendada": "Assassino",
+    "tipo": "active",
+    "descricao": "Aplica veneno que adormece o alvo por 2 turnos se falhar na resistencia.",
+    "cooldownTurnos": 4,
+    "atributoPrincipal": "furtividade",
+    "pontos": { "dano": 2, "cura": 0, "duracao": 2 }
+  },
+  {
+    "id": "passo-sombra",
+    "nome": "Passo das Sombras",
+    "classeRecomendada": "Assassino",
+    "tipo": "active",
+    "descricao": "Teletransporta-se para tras do inimigo e ataca por surpresa com dano dobrado.",
+    "cooldownTurnos": 3,
+    "atributoPrincipal": "furtividade",
+    "pontos": { "dano": 4, "cura": 0, "duracao": 0 }
+  },
+  {
+    "id": "palma-monge",
+    "nome": "Palma Energética",
+    "classeRecomendada": "Monge",
+    "tipo": "active",
+    "descricao": "Canaliza energia vital na palma da mao para um ataque que atordoa o inimigo por 1 turno.",
+    "cooldownTurnos": 3,
+    "atributoPrincipal": "destreza",
+    "pontos": { "dano": 5, "cura": 0, "duracao": 1 }
+  },
+  {
+    "id": "cura-monge",
+    "nome": "Cura Interior",
+    "classeRecomendada": "Monge",
+    "tipo": "active",
+    "descricao": "Medita brevemente e recupera 20% da vida atraves do flujo interno de chi.",
+    "cooldownTurnos": 3,
+    "atributoPrincipal": "sabedoria",
+    "pontos": { "dano": 0, "cura": 20, "duracao": 0 }
+  }
+]

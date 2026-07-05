@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Artefatos
+err.txt
+timeline_debug.txt
+*-debug.txt
+*.zip
+
+# Config local (sobrescreve .env em runtime — contém chaves reais)
+settings.json
+
+# Env local (.env.example vai pro repo; .env fica local)
+.env
+
+# MiMo
+.mimocode/
+
+# OS
+Thumbs.db
+.DS_Store

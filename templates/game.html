@@ -1,0 +1,777 @@
+{% extends "base.html" %}
+
+{% block title %}Aventura #{{ adventure.code }} - Miniventure RPG{% endblock %}
+
+{% block extra_head %}
+<style>
+    .game-layout {
+        display: grid;
+        grid-template-columns: 1fr 320px;
+        grid-template-rows: auto auto;
+        gap: 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    /* Left Panel - Scene */
+    .scene-panel {
+        grid-row: 1 / 3;
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .scene-title {
+        font-family: var(--font-title);
+        font-size: 1.4rem;
+        color: var(--gold);
+        padding: 16px 20px 12px;
+        background: linear-gradient(145deg, var(--bg-card) 0%, var(--bg-panel) 100%);
+        border: 1px solid var(--border-gold);
+        border-radius: 10px 10px 0 0;
+        border-bottom: none;
+        text-shadow: 0 0 10px rgba(201, 168, 76, 0.2);
+    }
+
+    .scene-narration {
+        flex: 1;
+        padding: 20px 24px;
+        max-height: 480px;
+        overflow-y: auto;
+        background: linear-gradient(145deg, var(--bg-card) 0%, rgba(28, 42, 74, 0.7) 100%);
+        border-left: 1px solid var(--border-gold);
+        border-right: 1px solid var(--border-gold);
+        line-height: 1.7;
+        font-size: 0.95rem;
+        color: var(--text-light);
+        white-space: pre-wrap;
+    }
+
+    .scene-narration::-webkit-scrollbar { width: 8px; }
+    .scene-narration::-webkit-scrollbar-track { background: var(--bg-panel); }
+    .scene-narration::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 4px; }
+
+    .narration-paragraph { margin-bottom: 12px; }
+    .narration-paragraph em { color: var(--gold); font-style: italic; }
+    .narration-paragraph strong { color: var(--gold-light); }
+
+    .scene-action-bar {
+        display: flex;
+        gap: 0;
+        background: linear-gradient(145deg, var(--bg-card) 0%, var(--bg-panel) 100%);
+        border: 1px solid var(--border-gold);
+        border-top: 1px solid var(--border-gold);
+        border-radius: 0 0 10px 10px;
+        overflow: hidden;
+    }
+
+    .action-input {
+        flex: 1;
+        padding: 14px 18px;
+        background: transparent;
+        border: none;
+        color: var(--text-light);
+        font-size: 0.95rem;
+    }
+
+    .action-input:focus {
+        outline: none;
+        box-shadow: none;
+    }
+
+    .action-input::placeholder {
+        color: var(--text-muted);
+        font-style: italic;
+    }
+
+    .action-send-btn {
+        padding: 14px 24px;
+        background: var(--gold-dim);
+        border: none;
+        color: var(--parchment);
+        font-family: var(--font-title);
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background 0.2s;
+        white-space: nowrap;
+    }
+
+    .action-send-btn:hover {
+        background: var(--gold);
+        color: var(--bg-dark);
+    }
+
+    #action-status {
+        padding: 8px 20px;
+        background: rgba(26, 58, 92, 0.3);
+        color: #6aa8d4;
+        font-size: 0.85rem;
+        display: none;
+        border-left: 1px solid var(--border-gold);
+        border-right: 1px solid var(--border-gold);
+    }
+
+    .action-log-entry {
+        padding: 8px 0;
+        border-bottom: 1px solid var(--border-subtle);
+        font-size: 0.9rem;
+        color: var(--text-light);
+    }
+
+    #game-error {
+        padding: 12px 20px;
+        background: rgba(139, 26, 26, 0.15);
+        border: 1px solid rgba(139, 26, 26, 0.3);
+        color: #e05555;
+        border-radius: 0;
+        display: none;
+        border-left: 1px solid var(--border-gold);
+        border-right: 1px solid var(--border-gold);
+    }
+
+    /* Right Panel - Character Info */
+    .char-panel {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .char-info-card {
+        background: linear-gradient(145deg, var(--bg-card) 0%, var(--bg-panel) 100%);
+        border: 1px solid var(--border-gold);
+        border-radius: 10px;
+        padding: 16px;
+        box-shadow: 0 4px 20px var(--shadow-dark);
+    }
+
+    .char-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+    .char-avatar {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: var(--bg-dark);
+        border: 2px solid var(--gold-dim);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.3rem;
+    }
+    .char-name {
+        font-family: var(--font-title);
+        font-size: 1.15rem;
+        color: var(--gold);
+    }
+    .char-race {
+        font-size: 0.82rem;
+        color: var(--text-muted);
+    }
+
+    /* Life Bar */
+    .stat-label {
+        font-size: 0.78rem;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 4px;
+    }
+    .life-bar-container {
+        position: relative;
+        height: 22px;
+        background: var(--bg-dark);
+        border-radius: 6px;
+        overflow: hidden;
+        border: 1px solid var(--border-gold);
+        margin-bottom: 12px;
+    }
+    .life-bar-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #8b1a1a, #cc3333);
+        border-radius: 6px;
+        transition: width 0.5s ease;
+    }
+    .life-bar-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 0.78rem;
+        font-weight: bold;
+        color: #fff;
+        text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    }
+
+    /* Coins */
+    .coins-display {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 12px;
+        padding: 8px 12px;
+        background: var(--bg-dark);
+        border-radius: 6px;
+        border: 1px solid var(--border-subtle);
+    }
+    .coins-icon { font-size: 1.1rem; }
+    .coins-value {
+        font-family: var(--font-title);
+        color: var(--gold);
+        font-size: 1rem;
+    }
+
+    /* Armor Slots */
+    .armor-section { margin-bottom: 8px; }
+    .armor-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 6px;
+    }
+    .armor-slot {
+        flex: 1;
+        min-width: 54px;
+        padding: 8px 4px;
+        background: var(--bg-dark);
+        border: 1px solid var(--border-gold);
+        border-radius: 6px;
+        text-align: center;
+        font-size: 0.72rem;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+    }
+    .armor-slot-equipped {
+        border-color: var(--gold);
+        color: var(--gold);
+    }
+    .armor-slot-icon {
+        display: block;
+        font-size: 1.1rem;
+        margin-bottom: 2px;
+    }
+
+    /* Inventory */
+    .inventory-section { margin-bottom: 8px; }
+    .inventory-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 6px;
+        margin-top: 6px;
+    }
+    .inv-slot {
+        aspect-ratio: 1;
+        background: var(--bg-dark);
+        border: 1px solid var(--border-gold);
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.3rem;
+        color: var(--text-muted);
+        cursor: default;
+        transition: border-color 0.15s;
+    }
+    .inv-slot:hover { border-color: var(--gold); }
+    .inv-slot-filled { border-color: var(--gold-dim); color: var(--gold); cursor: pointer; }
+
+    /* Abilities */
+    .abilities-section { margin-bottom: 0; }
+    .ability-list { display: flex; flex-direction: column; gap: 6px; margin-top: 6px; }
+    .ability-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 10px;
+        background: var(--bg-dark);
+        border: 1px solid var(--border-gold);
+        border-radius: 6px;
+        font-size: 0.85rem;
+    }
+    .ability-name { flex: 1; color: var(--text-light); }
+    .ability-cooldown {
+        font-size: 0.75rem;
+        padding: 2px 8px;
+        border-radius: 12px;
+        background: rgba(26, 58, 92, 0.3);
+        color: #6aa8d4;
+        border: 1px solid rgba(26, 58, 92, 0.4);
+    }
+    .ability-ready {
+        background: rgba(45, 106, 45, 0.15);
+        color: #5ab55a;
+        border-color: rgba(45, 106, 45, 0.3);
+    }
+
+    /* Bottom - Party */
+    .game-bottom {
+        grid-column: 1 / -1;
+    }
+
+    .party-panel {
+        background: linear-gradient(145deg, var(--bg-card) 0%, var(--bg-panel) 100%);
+        border: 1px solid var(--border-gold);
+        border-radius: 10px;
+        padding: 16px 20px;
+        box-shadow: 0 4px 20px var(--shadow-dark);
+    }
+
+    .turn-indicator {
+        font-family: var(--font-title);
+        font-size: 1.1rem;
+        color: var(--gold);
+        margin-bottom: 14px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--border-gold);
+    }
+    .turn-mine { color: #5ab55a; text-shadow: 0 0 8px rgba(90, 181, 90, 0.3); }
+    .turn-other { color: var(--gold); }
+
+    .party-rows {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 14px;
+    }
+
+    .party-member {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 12px;
+        background: var(--bg-dark);
+        border-radius: 6px;
+        border: 1px solid var(--border-subtle);
+        font-size: 0.88rem;
+    }
+    .party-member-active {
+        border-color: var(--gold);
+        box-shadow: 0 0 8px rgba(201, 168, 76, 0.15);
+    }
+    .party-status-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+    }
+    .dot-alive { background: #5ab55a; }
+    .dot-dead { background: #e05555; }
+    .dot-bot { background: #6aa8d4; }
+
+    /* Action Buttons */
+    .action-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 10px;
+    }
+    .action-btn {
+        padding: 10px 18px;
+        font-size: 0.88rem;
+    }
+
+    /* Connection Status */
+    #connection-status {
+        font-size: 0.8rem;
+        padding: 4px 10px;
+        border-radius: 4px;
+        display: inline-block;
+    }
+    .status-connected { color: #5ab55a; }
+    .status-disconnected { color: #e05555; }
+
+    /* Spectator Banner */
+    .spectator-banner {
+        text-align: center;
+        padding: 14px;
+        background: rgba(139, 26, 26, 0.15);
+        border: 1px solid rgba(139, 26, 26, 0.3);
+        border-radius: 8px;
+        font-family: var(--font-title);
+        color: #e05555;
+        font-size: 1.1rem;
+        margin-bottom: 16px;
+        display: none;
+    }
+    .spectator-banner.visible { display: block; }
+
+    /* Modals */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0,0,0,0.7);
+        z-index: 2000;
+        align-items: center;
+        justify-content: center;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal-card {
+        background: linear-gradient(145deg, var(--bg-card) 0%, var(--bg-panel) 100%);
+        border: 2px solid var(--border-gold);
+        border-radius: 12px;
+        padding: 28px;
+        width: 90%;
+        max-width: 480px;
+        box-shadow: 0 8px 40px var(--shadow-dark);
+    }
+    .modal-title {
+        font-family: var(--font-title);
+        font-size: 1.3rem;
+        color: var(--gold);
+        margin-bottom: 20px;
+    }
+    .modal-close {
+        float: right;
+        background: none;
+        border: none;
+        color: var(--text-muted);
+        font-size: 1.3rem;
+        cursor: pointer;
+        line-height: 1;
+    }
+    .modal-close:hover { color: var(--gold); }
+
+    /* Items selector */
+    .item-selector-entry {
+        display: block;
+        width: 100%;
+        padding: 10px 14px;
+        background: var(--bg-dark);
+        border: 1px solid var(--border-gold);
+        border-radius: 6px;
+        color: var(--text-light);
+        margin-bottom: 8px;
+        cursor: pointer;
+        text-align: left;
+    }
+    .item-selector-entry:hover { border-color: var(--gold); }
+
+    /* Responsive */
+    @media (max-width: 860px) {
+        .game-layout {
+            grid-template-columns: 1fr;
+        }
+        .scene-panel { grid-row: auto; }
+    }
+
+    /* Character view modal */
+    .char-view-card {
+        background: linear-gradient(145deg, var(--bg-card) 0%, var(--bg-panel) 100%);
+        border: 2px solid var(--border-gold);
+        border-radius: 12px;
+        width: 92vw;
+        max-width: 680px;
+        max-height: 86vh;
+        overflow-y: auto;
+        padding: 24px;
+    }
+    .char-view-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid var(--border-subtle);
+        padding-bottom: 14px;
+        margin-bottom: 18px;
+    }
+    .char-view-header h2 { color: var(--gold); font-family: var(--font-title); margin: 0; }
+    .char-view-section { margin-bottom: 16px; }
+    .char-view-section-title { color: var(--gold); font-family: var(--font-title); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
+    .char-view-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .char-view-field { display: flex; flex-direction: column; gap: 2px; }
+    .char-view-field-label { font-size: 0.68rem; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.05em; }
+    .char-view-field-value { color: var(--text-light); font-size: 0.92rem; }
+    .char-view-attrs { display: flex; flex-wrap: wrap; gap: 6px; }
+    .char-view-attr-pill { background: var(--bg-dark); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 4px 12px; font-size: 0.8rem; color: var(--text-light); }
+    .char-view-desc { color: var(--text-light); line-height: 1.6; font-size: 0.9rem; white-space: pre-wrap; }
+    .char-view-empty { color: var(--text-muted); font-style: italic; }
+    .party-member { cursor: pointer; position: relative; }
+    .party-member:hover { background-color: rgba(255, 204, 77, 0.08); border-color: var(--gold); }
+    .party-member .life-tooltip {
+        display: none;
+        position: absolute;
+        bottom: calc(100% + 6px);
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--bg-dark);
+        border: 1px solid var(--border-gold);
+        border-radius: 6px;
+        padding: 5px 10px;
+        font-size: 0.76rem;
+        color: var(--text-light);
+        white-space: nowrap;
+        z-index: 1500;
+        pointer-events: none;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    }
+    .party-member:hover .life-tooltip { display: block; }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Connection Status -->
+<div style="text-align:right; margin-bottom:8px;">
+    <span id="connection-status" class="status-disconnected">Desconectado</span>
+</div>
+
+<!-- Spectator Banner -->
+<div class="spectator-banner" id="spectator-banner">
+    Modo Espectador - Você caiu em batalha
+</div>
+
+<div class="game-layout">
+    <!-- Left: Scene Panel -->
+    <div class="scene-panel">
+        <h2 class="scene-title" id="scene-title">Carregando...</h2>
+
+        <div class="scene-narration" id="scene-narration">
+            <p class="narration-paragraph"><em>A narrativa da aventura aparecerá aqui...</em></p>
+        </div>
+
+        <div id="action-status"></div>
+        <div id="game-error"></div>
+
+        <form id="action-form" onsubmit="return false;">
+            <div class="scene-action-bar">
+                <input type="text" class="action-input" id="action-input"
+                       placeholder="Descreva sua ação..."
+                       autocomplete="off">
+                <button type="submit" class="action-send-btn" id="action-send">Enviar Ação</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Right: Character Panel -->
+    <div class="char-panel">
+        <!-- Character Info -->
+        <div class="char-info-card">
+            <div class="char-header">
+                <div class="char-avatar" id="char-avatar">⚔</div>
+                <div>
+                    <div class="char-name" id="char-name">{{ character.nome }}</div>
+                    <div class="char-race" id="char-race">{{ character.raca }}</div>
+                </div>
+            </div>
+
+            <!-- Vida -->
+            <div class="stat-label">Vida</div>
+            <div class="life-bar-container">
+                <div class="life-bar-fill" id="life-bar" style="width: 100%"></div>
+                <span class="life-bar-text" id="life-text">100%</span>
+            </div>
+
+            <!-- Moedas -->
+            <div class="coins-display">
+                <span class="coins-icon">🪙</span>
+                <span class="stat-label" style="margin-bottom:0; flex:1;">Moedas</span>
+                <span class="coins-value" id="coins-display">0</span>
+            </div>
+
+            <!-- Armor -->
+            <div class="armor-section">
+                <div class="stat-label">Armadura</div>
+                <div class="armor-grid">
+                    <div class="armor-slot" id="armor-house"><span class="armor-slot-icon">🪖</span>Cabeça</div>
+                    <div class="armor-slot" id="armor-torso"><span class="armor-slot-icon">🧥</span>Torso</div>
+                    <div class="armor-slot" id="armor-maos"><span class="armor-slot-icon">🧤</span>Mãos</div>
+                    <div class="armor-slot" id="armor-pernas"><span class="armor-slot-icon">👖</span>Pernas</div>
+                    <div class="armor-slot" id="armor-pes"><span class="armor-slot-icon">👢</span>Pés</div>
+                </div>
+            </div>
+
+            <!-- Inventory -->
+            <div class="inventory-section">
+                <div class="stat-label">Inventário</div>
+                <div class="inventory-grid" id="inventory-slots">
+                    <div class="inv-slot"></div><div class="inv-slot"></div>
+                    <div class="inv-slot"></div><div class="inv-slot"></div>
+                    <div class="inv-slot"></div><div class="inv-slot"></div>
+                    <div class="inv-slot"></div><div class="inv-slot"></div>
+                </div>
+            </div>
+
+            <!-- Abilities -->
+            <div class="abilities-section">
+                <div class="stat-label">Habilidades</div>
+                <div class="ability-list" id="ability-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom: Party -->
+    <div class="game-bottom">
+        <div class="party-panel">
+            <div class="turn-indicator" id="turn-indicator">Turno de: {{ character.nome }}</div>
+
+            <!-- Players -->
+            <div class="party-rows" id="player-row">
+                {% for player in adventure.players %}
+                <div class="party-member {% if player.nome == character.nome %}party-member-active{% endif %}" data-char-code="{{ player.code }}" data-entity-type="player">
+                    <span class="party-status-dot dot-alive"></span>
+                    <span>{{ player.nome }}</span>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Bots -->
+            {% if adventure.bots %}
+            <div class="stat-label" style="margin-bottom:6px;">Bots</div>
+            <div class="party-rows" id="bot-row">
+                {% for bot in adventure.bots %}
+                <div class="party-member" data-char-code="{{ bot.code }}" data-entity-type="bot">
+                    <span class="party-status-dot dot-bot"></span>
+                    <span>{{ bot.nome }} (Bot)</span>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- NPCs -->
+            <div id="npc-section" style="display:none;">
+                <div class="stat-label" style="margin-bottom:6px;">NPCs</div>
+                <div class="party-rows" id="npc-row"></div>
+            </div>
+
+            <!-- Enemies -->
+            <div id="enemy-section" style="display:none;">
+                <div class="stat-label" style="margin-bottom:6px; color:#e05555;">Inimigos</div>
+                <div class="party-rows" id="enemy-row"></div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button class="btn action-btn" data-action="usar_item">Usar Item</button>
+                <button class="btn action-btn" data-action="curar">Curar</button>
+                <button class="btn action-btn" data-action="trocar">Trocar</button>
+                <button class="btn action-btn" data-action="conversar">Conversar</button>
+                <button class="btn action-btn" data-action="inspecionar">Inspecionar</button>
+                <button class="btn action-btn" data-action="passar_turno">Passar Turno</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Trade Modal -->
+<div class="modal-overlay" id="trade-modal">
+    <div class="modal-card">
+        <button class="modal-close" onclick="TradeUI.close()">&times;</button>
+        <h3 class="modal-title">Trocar Itens</h3>
+        <div id="trade-message" style="display:none; margin-bottom:12px; color:#5ab55a;"></div>
+        <div id="trade-error" style="display:none; margin-bottom:12px;" class="error-msg"></div>
+        <div style="margin-bottom:12px;">
+            <label for="trade-partner-select">Parceiro</label>
+            <select id="trade-partner-select"><option value="">-- Selecione parceiro --</option></select>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+            <div>
+                <div class="stat-label">Seu Inventário</div>
+                <div id="trade-my-inventory" style="max-height:160px; overflow-y:auto; margin-bottom:10px;"></div>
+                <div id="trade-my-coins" style="margin-bottom:10px;"></div>
+                <label>Oferecer Moedas</label>
+                <input type="number" id="trade-offer-coins" value="0" min="0">
+            </div>
+            <div>
+                <div class="stat-label">Inventário do Parceiro</div>
+                <div id="trade-partner-inventory" style="max-height:160px; overflow-y:auto; margin-bottom:10px;"></div>
+                <div id="trade-partner-coins" style="margin-bottom:10px;"></div>
+                <label>Solicitar Moedas</label>
+                <input type="number" id="trade-request-coins" value="0" min="0">
+            </div>
+        </div>
+        <div style="display:flex; gap:8px; margin-top:16px;">
+            <button class="btn btn-primary" id="trade-propose-btn">Propor Troca</button>
+            <button class="btn" id="trade-cancel-btn">Cancelar</button>
+            <button class="btn" id="trade-accept-btn" style="display:none;">Aceitar</button>
+            <button class="btn btn-danger" id="trade-reject-btn" style="display:none;">Recusar</button>
+            <button class="btn btn-primary" id="trade-confirm-btn" style="display:none;">Confirmar</button>
+        </div>
+    </div>
+</div>
+
+<!-- NPC Chat Modal -->
+<div class="modal-overlay" id="chat-selector-modal">
+    <div class="modal-card">
+        <button class="modal-close" onclick="document.getElementById('chat-selector-modal').style.display='none';">&times;</button>
+        <h3 class="modal-title">Conversar</h3>
+        <div id="chat-target-list" style="max-height:300px; overflow-y:auto;"></div>
+    </div>
+</div>
+
+<!-- Chat Active Modal -->
+<div class="modal-overlay" id="chat-modal">
+    <div class="modal-card">
+        <button class="modal-close" id="chat-close-btn">&times;</button>
+        <h3 class="modal-title" id="chat-title">Conversa</h3>
+        <div id="chat-messages" style="max-height:260px; overflow-y:auto; margin-bottom:12px; padding:10px; background:var(--bg-dark); border-radius:8px; border:1px solid var(--border-subtle); min-height:100px;">
+            <p style="color:var(--text-muted); font-style:italic;">Selecione um NPC para conversar.</p>
+        </div>
+        <div id="chat-counter" style="margin-bottom:8px; color:var(--text-muted); font-size:0.82rem; display:none;"></div>
+        <div style="display:flex; gap:8px;">
+            <input type="text" id="chat-input" placeholder="Diga algo..." style="flex:1;">
+            <button class="btn" id="chat-send-btn">Enviar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Item Selector Modal -->
+<div class="modal-overlay" id="item-selector-modal" style="display:none;">
+    <div class="modal-card">
+        <button class="modal-close" onclick="document.getElementById('item-selector-modal').style.display='none';">&times;</button>
+        <h3 class="modal-title">Selecionar Item</h3>
+        <div class="item-selector-list"></div>
+    </div>
+</div>
+
+<!-- Heal Modal -->
+<div class="modal-overlay" id="heal-modal" style="display:none;">
+    <div class="modal-card">
+        <button class="modal-close" onclick="document.getElementById('heal-modal').style.display='none';">&times;</button>
+        <h3 class="modal-title">Curar</h3>
+        <div class="item-selector-list"></div>
+    </div>
+</div>
+
+<!-- Incoming Trade Notification -->
+<div id="trade-incoming" style="display:none; position:fixed; bottom:20px; right:20px; padding:16px 24px; background:var(--bg-card); border:1px solid var(--gold); border-radius:10px; box-shadow:0 8px 30px rgba(0,0,0,0.5); z-index:3000;"></div>
+
+<!-- Character View Modal -->
+<div class="modal-overlay" id="char-view-modal" style="display:none;">
+    <div class="char-view-card">
+        <div class="char-view-header">
+            <h2 id="char-view-title">Ficha</h2>
+            <button class="modal-close" id="char-view-close" type="button">&times;</button>
+        </div>
+        <div id="char-view-body"></div>
+    </div>
+</div>
+
+<script>
+    var adventureCode = "{{ adventure.code }}";
+    var characterCode = "{{ character.code }}";
+
+    if (!characterCode) {
+        try {
+            var stored = sessionStorage.getItem('adv_' + adventureCode + '_char');
+            if (stored) characterCode = stored;
+        } catch(e) {}
+    }
+    if (!characterCode) {
+        var match = document.cookie.match(new RegExp('adv_' + adventureCode + '_char=([^;]+)'));
+        if (match) characterCode = decodeURIComponent(match[1]);
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        Game.init();
+    });
+</script>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+<script src="/static/js/realtime.js"></script>
+<script src="/static/js/game.js"></script>
+<script src="/static/js/trade.js"></script>
+<script src="/static/js/chat.js"></script>
+{% endblock %}

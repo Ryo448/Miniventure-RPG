@@ -1,0 +1,142 @@
+[
+  {
+    "id": "humano",
+    "nome": "Humano",
+    "classeRecomendada": "Guerreiro",
+    "atributoPrincipal": "sorte",
+    "descricao": "A raca mais difundida e versatil de todas. Humanos adaptam-se a qualquer ambiente e cultura, destacando-se pela determinacao e ambição. Sua diversidade e sua maior forca.",
+    "habilidadeRacial": "Adaptabilidade: +1 em qualquer atributo ao criar o personagem",
+    "baseDescription": "Estatura media, tons de pele variados do mais claro ao mais escuro, cabelos de todas as cores e texturas.",
+    "pontos": { "forca": 0, "destreza": 0, "constituicao": 0, "inteligencia": 0, "sabedoria": 0, "carisma": 0, "magia": 0, "furtividade": 0, "sorte": 1 }
+  },
+  {
+    "id": "elfo",
+    "nome": "Elfo",
+    "classeRecomendada": "Mago",
+    "atributoPrincipal": "inteligencia",
+    "descricao": "Seres antigos e graciosos de orelhas pontudas, com vida milenar e conexao profunda com a magia e a natureza. Elfos sao mestres da magia e do arco, imortais no tempo mas frageis no corpo.",
+    "habilidadeRacial": "Visao Elfica: +2 em testes de percepcao no escuro",
+    "baseDescription": "Altos e esbeltos, com orelhas pontudas, pele clara como a lua e olhos brilhantes de tons sobrenaturais.",
+    "pontos": { "forca": -1, "destreza": 1, "constituicao": -1, "inteligencia": 2, "sabedoria": 1, "carisma": 1, "magia": 2, "furtividade": 1, "sorte": 0 }
+  },
+  {
+    "id": "anao",
+    "nome": "Anao",
+    "classeRecomendada": "Guerreiro",
+    "atributoPrincipal": "constituicao",
+    "descricao": "Guerreiros baixos e robustos das profundezas da terra, forjadores de metais e pedras. Anoes sao resistentes como a montanha e leais como o aco que forjam.",
+    "habilidadeRacial": "Resistencia Ana: +3 contra venenos e doencas",
+    "baseDescription": "Baixos e largos, com musculatura densa e barbas longas e trancadas. Pele avermelhada ou morena, olhos escuros.",
+    "pontos": { "forca": 2, "destreza": -1, "constituicao": 3, "inteligencia": 0, "sabedoria": 1, "carisma": -1, "magia": 0, "furtividade": -1, "sorte": 0 }
+  },
+  {
+    "id": "halfling",
+    "nome": "Halfling",
+    "classeRecomendada": "Ladino",
+    "atributoPrincipal": "furtividade",
+    "descricao": "Pequenos e ageis, com pes calos e coragem desproporcional ao tamanho. Halflings sao mestres da furtividade e da sorte.",
+    "habilidadeRacial": "Sorte Halfling: Pode rerolar um teste falha uma vez por cena",
+    "baseDescription": "Baixos e arredondados, com pes grandes e calosos cobertos de pelos, cabelos cacheados e olhos brilhantes.",
+    "pontos": { "forca": -2, "destreza": 2, "constituicao": 0, "inteligencia": 0, "sabedoria": 0, "carisma": 1, "magia": 0, "furtividade": 3, "sorte": 2 }
+  },
+  {
+    "id": "meio-elfo",
+    "nome": "Meio-Elfo",
+    "classeRecomendada": "Bardo",
+    "atributoPrincipal": "carisma",
+    "descricao": "Filhos de dois mundos, meio-elfos herdam a graca dos elfos e a adaptabilidade dos humanos. Sociaveis e carismaticos.",
+    "habilidadeRacial": "Encanto Mestico: +2 em testes de persuasao",
+    "baseDescription": "Altura entre humanos e elfos, orelhas levemente pontudas, tracos delicados mas com a expressividade humana.",
+    "pontos": { "forca": 0, "destreza": 1, "constituicao": 0, "inteligencia": 0, "sabedoria": 0, "carisma": 3, "magia": 1, "furtividade": 0, "sorte": 1 }
+  },
+  {
+    "id": "meio-orc",
+    "nome": "Meio-Orc",
+    "classeRecomendada": "Barbaro",
+    "atributoPrincipal": "forca",
+    "descricao": "Nascidos da violencia entre orcs e humanos, meio-orcs sao imponentes e temidos. Sua heranca lhes confere forca e resistencia sobre-humanas.",
+    "habilidadeRacial": "Furia Implacavel: Quando vida < 25%, dano +2 em ataques corpo a corpo",
+    "baseDescription": "Altos e musculosos, com pele esverdeada ou acinzentada, mandibulas proeminentes e caninos inferiores salientes.",
+    "pontos": { "forca": 3, "destreza": 0, "constituicao": 2, "inteligencia": -1, "sabedoria": -1, "carisma": -2, "magia": 0, "furtividade": 0, "sorte": 0 }
+  },
+  {
+    "id": "gnomo",
+    "nome": "Gnomo",
+    "classeRecomendada": "Mago",
+    "atributoPrincipal": "inteligencia",
+    "descricao": "Pequenos inventores e ilusionistas, gnomos possuem mente afiada e curiosidade insaciavel. Magia e tecnologia coexistem naturalmente para eles.",
+    "habilidadeRacial": "Trapaca Ilusionista: Pode criar uma ilusao menor uma vez por cena",
+    "baseDescription": "Muito baixos e esguios, com narizes proeminentes e olhos cintilantes de inteligencia. Cabelos desgrenhados.",
+    "pontos": { "forca": -2, "destreza": 1, "constituicao": -1, "inteligencia": 3, "sabedoria": 0, "carisma": 1, "magia": 3, "furtividade": 1, "sorte": 0 }
+  },
+  {
+    "id": "draconato",
+    "nome": "Draconato",
+    "classeRecomendada": "Paladino",
+    "atributoPrincipal": "forca",
+    "descricao": "Descendentes de dragoes, draconatos caminham entre os mortais como vivas lembrancas da era dos grandes vos. Escamas cromaticas cobrem seus corpos e sopro elemental arde em suas gargantas.",
+    "habilidadeRacial": "Sopro Dragonico: Ataque de area elemental uma vez por cena",
+    "baseDescription": "Altos e imponentes, com escamas coloridas que variam segundo a linhagem dragonica. Olhos reptilianos, chifres curtos e cauda musculosa.",
+    "pontos": { "forca": 2, "destreza": 0, "constituicao": 1, "inteligencia": 0, "sabedoria": 1, "carisma": 2, "magia": 1, "furtividade": -2, "sorte": 0 }
+  },
+  {
+    "id": "tiefling",
+    "nome": "Tiefling",
+    "classeRecomendada": "Necromante",
+    "atributoPrincipal": "magia",
+    "descricao": "Marcados por sangue infernal em suas veias, tieflings carregam chifres, cauda e a desconfianca do mundo. Seu sangue profano lhes confere resistencia ao fogo.",
+    "habilidadeRacial": "Resistencia Infernal: Metade do dano recebido por fogo",
+    "baseDescription": "Pele avermelhada ou acinzentada, chifres curvos na testa, cauda longa e preensil, olhos que brilham em tons infernais.",
+    "pontos": { "forca": 0, "destreza": 0, "constituicao": 0, "inteligencia": 1, "sabedoria": 0, "carisma": 2, "magia": 3, "furtividade": 1, "sorte": 0 }
+  },
+  {
+    "id": "elfo-florestal",
+    "nome": "Elfo Florestal",
+    "classeRecomendada": "Cacador",
+    "atributoPrincipal": "destreza",
+    "descricao": "Guardioes das florestas ancestrais, elfos florestais sao mais rusticos e furtivos que seus primos da cidade. Movem-se entre as arvores como sombras verdes.",
+    "habilidadeRacial": "Passo Silencioso: Nao deixa rastros em ambientes naturais",
+    "baseDescription": "Mais baixos e musculosos que elfos comuns, com pele morena e tatuagens tribais verdes. Cabelos trancados com penas.",
+    "pontos": { "forca": 0, "destreza": 3, "constituicao": 0, "inteligencia": 0, "sabedoria": 2, "carisma": 0, "magia": 1, "furtividade": 3, "sorte": 0 }
+  },
+  {
+    "id": "anao-montanha",
+    "nome": "Anao da Montanha",
+    "classeRecomendada": "Guerreiro",
+    "atributoPrincipal": "constituicao",
+    "descricao": "Mais robustos e belicosos que os anoes das colinas, os anoes da montanha sao guerreiros-ferramenteiros que forjam suas armas no coracao de vulcoes adormecidos.",
+    "habilidadeRacial": "Armadura Natural: +2 defesa contra ataques fisicos",
+    "baseDescription": "Mais largos e pesados que anoes comuns, com barbas espessas adornadas com aneis de ferro. Pele endurecida como couro velho.",
+    "pontos": { "forca": 3, "destreza": -2, "constituicao": 3, "inteligencia": 0, "sabedoria": 1, "carisma": -1, "magia": 0, "furtividade": -2, "sorte": 0 }
+  },
+  {
+    "id": "morto-vivo",
+    "nome": "Morto-Vivo",
+    "classeRecomendada": "Necromante",
+    "atributoPrincipal": "magia",
+    "descricao": "Erguidos do tumulo por magia ou maldicao, os mortos-vivos conscientes caminham entre os vivos com corpo palido e olhos brilhantes. Imunes a venenos e doencas.",
+    "habilidadeRacial": "Constituicao Profana: Imune a venenos e doencas",
+    "baseDescription": "Pele palida e fria ao toque, olhos que brilham em azul ou verde spectral. Movimentos lentos mas deliberados.",
+    "pontos": { "forca": 0, "destreza": -1, "constituicao": 2, "inteligencia": 0, "sabedoria": 0, "carisma": -2, "magia": 2, "furtividade": 1, "sorte": 0 }
+  },
+  {
+    "id": "coelho-vorpal",
+    "nome": "Coelho Vorpal",
+    "classeRecomendada": "Ladino",
+    "atributoPrincipal": "furtividade",
+    "descricao": "Pequenos e letais, os coelhos vorpal saltam entre as sombras com presas que cortam a realidade. Dizem que um coelho vorpal nunca erra um golpe de surpresa. Doces por fora, implacaveis por dentro.",
+    "habilidadeRacial": "Salto Vorpal: Pode agir duas vezes em um turno uma vez por cena",
+    "baseDescription": "Pequeno e coberto de pelo macio, geralmente branco ou cinza. Olhos rubros brilhantes, orelhas longas e expressivas, presas sobressalentes afiadas como garras.",
+    "pontos": { "forca": -1, "destreza": 3, "constituicao": 0, "inteligencia": 0, "sabedoria": 0, "carisma": 1, "magia": 1, "furtividade": 3, "sorte": 2 }
+  },
+  {
+    "id": "caith-sith",
+    "nome": "Caith Sith",
+    "classeRecomendada": "Mago",
+    "atributoPrincipal": "magia",
+    "descricao": "Felinos mistico-inteligentes que caminham sobre duas pernas e falam com voz melodica. Caith sith sao espiritos selvagens com afinidade a magia das fadas e dos espelhos, brincalhoes e trapaceiros magicos.",
+    "habilidadeRacial": "Sete Vidas: Pode rerolar um teste de morte uma vez por cena",
+    "baseDescription": "Humanoide felino de pelagem variada (negra, faiscante, laranja, branca), com olhos grandes e brilhantes em tons amarelos ou verdes. Cauda longa e felpuda, orelhas pontudas, porte elegante.",
+    "pontos": { "forca": -1, "destreza": 2, "constituicao": 0, "inteligencia": 1, "sabedoria": 1, "carisma": 2, "magia": 3, "furtividade": 2, "sorte": 1 }
+  }
+]

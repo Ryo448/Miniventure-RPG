@@ -1,0 +1,201 @@
+{% extends "base.html" %}
+
+{% block title %}{{ character.nome if character else 'Personagem' }} - Miniventure RPG{% endblock %}
+
+{% block content %}
+{% if error or not character %}
+<div class="view-container">
+    <div class="card empty-state">
+        <div class="empty-icon">⚔️</div>
+        <p class="empty-text">Personagem não encontrado.</p>
+        <a href="/characters" class="btn btn-primary">Voltar para Meus Personagens</a>
+    </div>
+</div>
+{% else %}
+<div class="view-container">
+    <div class="view-header">
+        <h1 class="section-title">{{ character.nome }}</h1>
+        <div class="view-actions">
+            <a href="/characters/{{ character.code }}/edit" class="btn btn-sm">Editar</a>
+            <a href="/characters" class="btn btn-sm">Voltar</a>
+        </div>
+    </div>
+
+    <div class="view-section card">
+        <h2 class="view-section-title">Informações Básicas</h2>
+        <div class="view-grid">
+            <div class="view-field">
+                <span class="attr-label">Raça</span>
+                <span class="attr-value">{{ character.raca }}</span>
+            </div>
+            <div class="view-field">
+                <span class="attr-label">Gênero</span>
+                <span class="attr-value">{{ character.genero }}</span>
+            </div>
+            <div class="view-field">
+                <span class="attr-label">Idade</span>
+                <span class="attr-value">{{ character.idade }} anos</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="view-section card">
+        <h2 class="view-section-title">Atributos</h2>
+        <div class="attributes-summary">
+            <span title="Força">FOR <strong>{{ character.forca }}</strong></span>
+            <span title="Destreza">DES <strong>{{ character.destreza }}</strong></span>
+            <span title="Constituição">CON <strong>{{ character.constituicao }}</strong></span>
+            <span title="Inteligência">INT <strong>{{ character.inteligencia }}</strong></span>
+            <span title="Sabedoria">SAB <strong>{{ character.sabedoria }}</strong></span>
+            <span title="Carisma">CAR <strong>{{ character.carisma }}</strong></span>
+            <span title="Percepção/Furtividade">PER <strong>{{ character.furtividade }}</strong></span>
+        </div>
+    </div>
+
+    {% if character.arma and character.arma != '—' %}
+    <div class="view-section card">
+        <h2 class="view-section-title">Arma Inicial</h2>
+        <div class="view-field-row">
+            <span class="attr-label">Nome:</span>
+            <span class="attr-value">{{ character.arma }}</span>
+        </div>
+        {% if character.arma_desc %}
+        <p class="view-desc">{{ character.arma_desc }}</p>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    {% if character.habilidade and character.habilidade != '—' %}
+    <div class="view-section card">
+        <h2 class="view-section-title">Habilidade Especial</h2>
+        <div class="view-field-row">
+            <span class="attr-label">Nome:</span>
+            <span class="attr-value">{{ character.habilidade }}</span>
+        </div>
+        {% if character.habilidade_desc %}
+        <p class="view-desc">{{ character.habilidade_desc }}</p>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    {% if character.descricao_fisica %}
+    <div class="view-section card">
+        <h2 class="view-section-title">Descrição Física</h2>
+        <p class="view-desc">{{ character.descricao_fisica }}</p>
+    </div>
+    {% endif %}
+
+    {% if character.historia %}
+    <div class="view-section card">
+        <h2 class="view-section-title">História</h2>
+        <p class="view-desc">{{ character.historia }}</p>
+    </div>
+    {% endif %}
+</div>
+{% endif %}
+
+<style>
+    .view-container {
+        max-width: 720px;
+        margin: 0 auto;
+    }
+
+    .view-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+
+    .view-actions {
+        display: flex;
+        gap: 10px;
+    }
+
+    .view-section {
+        padding: 24px;
+        margin-bottom: 20px;
+    }
+
+    .view-section-title {
+        font-family: var(--font-title);
+        font-size: 1.15rem;
+        color: var(--gold);
+        margin-bottom: 16px;
+        border-bottom: 1px solid var(--border-gold);
+        padding-bottom: 8px;
+    }
+
+    .view-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+    }
+
+    .view-field {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .view-field-row {
+        display: flex;
+        gap: 8px;
+        align-items: baseline;
+    }
+
+    .attributes-summary {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        padding: 12px;
+        background: var(--bg-dark);
+        border-radius: 6px;
+        border: 1px solid var(--border-subtle);
+    }
+
+    .attributes-summary span {
+        font-size: 0.88rem;
+        color: var(--text-muted);
+        font-weight: 600;
+        letter-spacing: 0.3px;
+    }
+
+    .attributes-summary strong {
+        color: var(--gold);
+        font-size: 1rem;
+    }
+
+    .view-desc {
+        font-size: 0.92rem;
+        color: var(--text-light);
+        line-height: 1.6;
+        margin-top: 8px;
+        white-space: pre-wrap;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 48px 32px;
+    }
+
+    .empty-icon {
+        font-size: 3rem;
+        margin-bottom: 16px;
+    }
+
+    .empty-text {
+        font-family: var(--font-title);
+        font-size: 1.1rem;
+        color: var(--text-muted);
+        margin-bottom: 24px;
+    }
+
+    .btn-sm {
+        padding: 8px 18px;
+        font-size: 0.88rem;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+
+{% block title %}Miniventure RPG - Início{% endblock %}
+
+{% block content %}
+<div class="home-container">
+    <div class="home-hero">
+        <h1 class="home-title">Miniventure RPG</h1>
+        <p class="home-subtitle">Um mundo de aventuras te espera</p>
+    </div>
+
+    <div class="home-menu">
+        <a href="/adventures/create" class="home-btn">
+            <span class="home-btn-icon">⚔️</span>
+            <span class="home-btn-text">Iniciar Aventura</span>
+            <span class="home-btn-desc">Crie uma nova aventura e convide seus companheiros</span>
+        </a>
+
+        <a href="/adventures/join" class="home-btn">
+            <span class="home-btn-icon">🚪</span>
+            <span class="home-btn-text">Entrar</span>
+            <span class="home-btn-desc">Junte-se a uma aventura existente</span>
+        </a>
+
+        <a href="/characters" class="home-btn">
+            <span class="home-btn-icon">📜</span>
+            <span class="home-btn-text">Personagens</span>
+            <span class="home-btn-desc">Gerencie seus heróis e aventureiros</span>
+        </a>
+    </div>
+
+    <div class="home-flavor">
+        <div class="home-flavor-ornament">◆</div>
+        <p class="home-flavor-text">O destino aguarda aqueles que ousam explorar o desconhecido...</p>
+        <div class="home-flavor-ornament">◆</div>
+    </div>
+</div>
+
+<style>
+    .home-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-height: calc(100vh - var(--nav-height) - 64px);
+        justify-content: center;
+        padding: 40px 20px;
+    }
+
+    .home-hero {
+        text-align: center;
+        margin-bottom: 60px;
+    }
+
+    .home-title {
+        font-family: var(--font-title);
+        font-size: 4rem;
+        color: var(--gold);
+        text-shadow:
+            0 0 20px rgba(201, 168, 76, 0.4),
+            0 0 60px rgba(201, 168, 76, 0.15);
+        letter-spacing: 3px;
+        margin-bottom: 12px;
+    }
+
+    .home-subtitle {
+        font-family: var(--font-title);
+        font-size: 1.3rem;
+        color: var(--text-muted);
+        letter-spacing: 1px;
+    }
+
+    .home-menu {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        width: 100%;
+        max-width: 420px;
+        margin-bottom: 80px;
+    }
+
+    .home-btn {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 20px 28px;
+        background: linear-gradient(145deg, var(--bg-card) 0%, var(--bg-panel) 100%);
+        border: 2px solid var(--border-gold);
+        border-radius: 10px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 20px var(--shadow-dark);
+    }
+
+    .home-btn:hover {
+        border-color: var(--gold);
+        box-shadow:
+            0 4px 20px var(--shadow-dark),
+            0 0 24px rgba(201, 168, 76, 0.15),
+            inset 0 0 24px rgba(201, 168, 76, 0.03);
+        transform: translateY(-2px);
+    }
+
+    .home-btn-icon {
+        font-size: 2rem;
+        min-width: 40px;
+        text-align: center;
+    }
+
+    .home-btn-text {
+        font-family: var(--font-title);
+        font-size: 1.3rem;
+        color: var(--gold);
+        display: block;
+    }
+
+    .home-btn-desc {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        display: block;
+        margin-top: 2px;
+    }
+
+    .home-flavor {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 24px 32px;
+        background: linear-gradient(145deg, rgba(26, 42, 68, 0.4) 0%, rgba(13, 13, 13, 0.6) 100%);
+        border: 1px solid var(--border-gold);
+        border-radius: 8px;
+        max-width: 500px;
+    }
+
+    .home-flavor-ornament {
+        color: var(--gold-dim);
+        font-size: 0.8rem;
+    }
+
+    .home-flavor-text {
+        font-family: var(--font-title);
+        font-style: italic;
+        font-size: 1rem;
+        color: var(--text-muted);
+        text-align: center;
+        line-height: 1.5;
+    }
+
+    @media (max-width: 600px) {
+        .home-title { font-size: 2.5rem; }
+        .home-subtitle { font-size: 1rem; }
+        .home-menu { max-width: 100%; }
+    }
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/home.js"></script>
+{% endblock %}

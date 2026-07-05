@@ -1,0 +1,381 @@
+{% extends "base.html" %}
+
+{% block title %}Criar Nova Aventura - Miniventure RPG{% endblock %}
+
+{% block content %}
+<div class="create-adventure-container">
+    <h1 class="section-title">Criar Nova Aventura</h1>
+
+    <div class="card create-form-card">
+        <form id="adventure-form" onsubmit="return false;">
+            <div class="form-group">
+                <label for="total-participants">Total de participantes</label>
+                <input type="number" id="total-participants" name="total_participants"
+                       min="1" max="4" value="4" step="1">
+                <small class="form-hint">De 1 a 4 jogadores no total (incluindo você)</small>
+            </div>
+
+            <div class="form-group">
+                <label for="bot-count">Quantos serão bots?</label>
+                <input type="number" id="bot-count" name="bot_count"
+                       min="0" value="0" step="1">
+                <small class="form-hint">Bots preenchem vagas automaticamente</small>
+            </div>
+
+            <div class="form-group" id="bot-source-group">
+                <label class="toggle-label">
+                    <input type="checkbox" id="bot-source-toggle">
+                    <span>Usar meus personagens como bots</span>
+                </label>
+                <small class="form-hint">Se desativado, a IA gera bots automaticamente (padrão).</small>
+            </div>
+
+            <div id="bot-char-selectors" style="display:none; margin-bottom:24px;">
+                <div id="bot-char-list"></div>
+                <small class="form-hint">Selecione um personagem para cada vaga de bot. Slots vazios geram bots por IA automaticamente.</small>
+            </div>
+
+            <div class="summary-card" id="summary">
+                <h3 class="summary-title">Resumo</h3>
+                <div class="summary-line">
+                    <span>Você (Host)</span>
+                    <span>1</span>
+                </div>
+                <div class="summary-line" id="summary-players">
+                    <span>Jogadores</span>
+                    <span id="player-count">3</span>
+                </div>
+                <div class="summary-line" id="summary-bots">
+                    <span>Bots</span>
+                    <span id="bot-display">0</span>
+                </div>
+                <div class="summary-divider"></div>
+                <div class="summary-line summary-total">
+                    <span>Total</span>
+                    <span id="total-display">4</span>
+                </div>
+            </div>
+
+            <div id="form-error" class="error-msg" style="display:none;"></div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary" id="create-btn">Criar Aventura</button>
+                <a href="/" class="back-link">← Voltar</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    .create-adventure-container {
+        max-width: 520px;
+        margin: 0 auto;
+    }
+
+    .form-group {
+        margin-bottom: 24px;
+    }
+
+    .form-hint {
+        display: block;
+        margin-top: 4px;
+        font-size: 0.82rem;
+        color: var(--text-muted);
+    }
+
+    .summary-card {
+        background: var(--bg-dark);
+        border: 1px solid var(--border-gold);
+        border-radius: 8px;
+        padding: 20px;
+        margin: 28px 0;
+    }
+
+    .summary-title {
+        font-family: var(--font-title);
+        color: var(--gold);
+        font-size: 1.15rem;
+        margin-bottom: 16px;
+    }
+
+    .summary-line {
+        display: flex;
+        justify-content: space-between;
+        padding: 6px 0;
+        font-size: 0.95rem;
+        color: var(--text-light);
+    }
+
+    .summary-divider {
+        border-top: 1px solid var(--border-gold);
+        margin: 8px 0;
+    }
+
+    .summary-total {
+        font-weight: bold;
+        color: var(--gold);
+        font-family: var(--font-title);
+        font-size: 1.05rem;
+    }
+
+    .form-actions {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        margin-top: 8px;
+    }
+
+    #bot-source-group {
+        padding: 14px 16px;
+        background: var(--bg-dark);
+        border: 1px solid var(--border-subtle);
+        border-radius: 8px;
+    }
+    .toggle-label {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+        font-size: 0.95rem;
+        color: var(--text-light);
+    }
+    .toggle-label input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        accent-color: var(--gold);
+        cursor: pointer;
+    }
+    .toggle-label input[type="checkbox"]:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+    }
+    .toggle-label:has(input:disabled) {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+    #bot-source-group.disabled .toggle-label {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    #bot-char-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    .host-character-selector-slot {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    .slot-label {
+        font-family: var(--font-title);
+        color: var(--gold);
+        font-size: 0.88rem;
+        min-width: 64px;
+    }
+    .bot-char-select {
+        flex: 1;
+        padding: 8px 12px;
+        background: var(--bg-dark);
+        border: 1px solid var(--border-subtle);
+        border-radius: 6px;
+        color: var(--text-light);
+        font-size: 0.92rem;
+        font-family: inherit;
+        cursor: pointer;
+    }
+    .bot-char-select:hover { border-color: var(--gold); }
+    .bot-char-select:focus { border-color: var(--gold); outline: none; }
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function() {
+    const totalInput = document.getElementById('total-participants');
+    const botInput = document.getElementById('bot-count');
+    const playerDisplay = document.getElementById('player-count');
+    const botDisplay = document.getElementById('bot-display');
+    const totalDisplay = document.getElementById('total-display');
+    const formError = document.getElementById('form-error');
+    const botSourceToggle = document.getElementById('bot-source-toggle');
+    const botSourceGroup = document.getElementById('bot-source-group');
+    const botSelectorsDiv = document.getElementById('bot-char-selectors');
+    const botCharList = document.getElementById('bot-char-list');
+    let allLocalChars = [];
+
+    async function loadLocalChars() {
+        try {
+            const r = await fetch('/api/local-characters');
+            allLocalChars = await r.json();
+            if (!Array.isArray(allLocalChars)) allLocalChars = [];
+        } catch (e) {
+            allLocalChars = [];
+        }
+        renderBotSelectors();
+    }
+
+    function getSelectedBotCodes() {
+        const codes = new Set();
+        document.querySelectorAll('.bot-char-select').forEach(s => {
+            if (s.value) codes.add(s.value);
+        });
+        return codes;
+    }
+
+    function renderBotSelectors() {
+        const bots = parseInt(botInput.value) || 0;
+        const prevValues = {};
+        document.querySelectorAll('.bot-char-select').forEach(s => {
+            prevValues[s.dataset.slot] = s.value;
+        });
+        botCharList.innerHTML = '';
+
+        for (let i = 0; i < bots; i++) {
+            const div = document.createElement('div');
+            div.className = 'host-character-selector-slot';
+
+            const label = document.createElement('div');
+            label.className = 'slot-label';
+            label.textContent = 'Bot ' + (i + 1);
+
+            const select = document.createElement('select');
+            select.className = 'bot-char-select';
+            select.dataset.slot = i;
+            const opt = document.createElement('option');
+            opt.value = '';
+            opt.textContent = '— Gerar por IA —';
+            select.appendChild(opt);
+
+            const selected = new Set(Object.values(prevValues).filter(Boolean));
+            allLocalChars.forEach(c => {
+                if (selected.has(c.code) && prevValues[i] !== c.code) return;
+                const o = document.createElement('option');
+                o.value = c.code;
+                o.textContent = (c.name || 'Sem nome') + ' (' + (c.race || '—') + ')';
+                select.appendChild(o);
+            });
+
+            if (prevValues[i]) select.value = prevValues[i];
+
+            select.addEventListener('change', renderBotSelectors);
+            div.appendChild(label);
+            div.appendChild(select);
+            botCharList.appendChild(div);
+        }
+    }
+
+    function updateSummary() {
+        const total = parseInt(totalInput.value) || 1;
+        const bots = parseInt(botInput.value) || 0;
+        const maxBots = Math.max(0, total - 1);
+
+        if (bots > maxBots) {
+            botInput.value = maxBots;
+        }
+        botInput.max = maxBots;
+
+        const realBots = Math.min(bots, maxBots);
+        const players = total - realBots - 1;
+
+        playerDisplay.textContent = players;
+        botDisplay.textContent = realBots;
+        totalDisplay.textContent = total;
+
+        if (realBots === 0) {
+            botSourceToggle.disabled = true;
+            botSourceGroup.classList.add('disabled');
+            botSelectorsDiv.style.display = 'none';
+        } else {
+            botSourceToggle.disabled = false;
+            botSourceGroup.classList.remove('disabled');
+            if (botSourceToggle.checked) {
+                botSelectorsDiv.style.display = 'block';
+                renderBotSelectors();
+            }
+        }
+    }
+
+    totalInput.addEventListener('input', updateSummary);
+    botInput.addEventListener('input', updateSummary);
+
+    botSourceToggle.addEventListener('change', function () {
+        if (this.checked) {
+            botSelectorsDiv.style.display = 'block';
+            loadLocalChars();
+        } else {
+            botSelectorsDiv.style.display = 'none';
+            botCharList.innerHTML = '';
+        }
+    });
+
+    document.getElementById('create-btn').addEventListener('click', async function () {
+        const total = parseInt(totalInput.value) || 0;
+        const bots = parseInt(botInput.value) || 0;
+
+        formError.style.display = 'none';
+
+        if (total < 1 || total > 4) {
+            formError.textContent = 'Total de participantes deve ser entre 1 e 4.';
+            formError.style.display = 'block';
+            return;
+        }
+        if (bots > total - 1) {
+            formError.textContent = 'Número de bots não pode exceder ' + (total - 1) + '.';
+            formError.style.display = 'block';
+            return;
+        }
+
+        let botSource = 'ai';
+        let botCharacterCodes = null;
+        if (botSourceToggle.checked && bots > 0) {
+            botSource = 'host';
+            botCharacterCodes = [];
+            document.querySelectorAll('.bot-char-select').forEach(s => {
+                botCharacterCodes.push(s.value || null);
+            });
+            const filled = botCharacterCodes.filter(c => c);
+            if (new Set(filled).size !== filled.length) {
+                formError.textContent = 'Personagens de bot não podem se repetir.';
+                formError.style.display = 'block';
+                return;
+            }
+        }
+
+        var btn = document.getElementById('create-btn');
+        btn.disabled = true;
+        btn.textContent = 'Criando...';
+
+        try {
+            const body = { totalParticipants: total, botCount: bots };
+            if (botSource === 'host') {
+                body.botSource = 'host';
+                body.botCharacterCodes = botCharacterCodes;
+            }
+            var res = await fetch('/api/adventures/create', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+            var data = await res.json();
+            if (data.error) {
+                formError.textContent = data.error;
+                formError.style.display = 'block';
+                btn.disabled = false;
+                btn.textContent = 'Criar Aventura';
+            } else if (data.code) {
+                window.location.href = '/adventures/' + data.code + '/waiting-room';
+            }
+        } catch (err) {
+            formError.textContent = 'Erro ao criar aventura.';
+            formError.style.display = 'block';
+            btn.disabled = false;
+            btn.textContent = 'Criar Aventura';
+        }
+    });
+
+    updateSummary();
+})();
+</script>
+{% endblock %}
