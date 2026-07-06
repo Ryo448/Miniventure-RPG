@@ -929,11 +929,36 @@ def _process_ai_action(adventure_code, character_code, action, task_id, depth=0,
         return False
 
     if not npc_already_added:
+        NPC_STOPWORDS = {
+            'arco', 'flecha', 'espada', 'adaga', 'lança', 'machado', 'martelo', 'clava', 'bordão',
+            'escudo', 'armadura', 'elmo', 'couraça', 'capacete', 'luva', 'bota', 'cinto',
+            'poção', 'elixir', 'pedra', 'cristal', 'gemar', 'moeda', 'ouro', 'prata', 'cobre',
+            'chave', 'livro', 'pergaminho', 'mapa', 'ampulheta', 'caixa', 'baú', 'saco',
+            'mesa', 'cadeira', 'porta', 'janela', 'parede', 'ponte', 'torre', 'castelo',
+            'estalagem', 'taverna', 'loja', 'templo', 'forte', 'caverna', 'floresta',
+            'rio', 'lago', 'mar', 'monte', 'colina', 'vale', 'planície', 'deserto',
+            'caminho', 'estrada', 'rua', 'praça', 'mercado',
+            'luz', 'sombra', 'fogo', 'fumaça', 'vento', 'chuva', 'neve', 'trovão',
+            'mão', 'mãos', 'cabeça', 'braço', 'perna', 'pé', 'olho', 'rosto',
+            'nada', 'tudo', 'algo', 'alguém', 'ninguém',
+            'caminho', 'lugar', 'vez', 'hora', 'momento', 'forma',
+            'grande', 'pequeno', 'novo', 'velho', 'bom', 'ruim',
+            'certa', 'certo', 'outra', 'outro', 'mesma', 'mesmo',
+            'tenta', 'tentar', 'começa', 'começar', 'continua', 'continuar',
+            'precisa', 'precisar', 'quer', 'querer', 'pode', 'poder',
+            'deve', 'devia', 'ser', 'estar', 'ter', 'haver', 'ir', 'vir',
+            'quando', 'então', 'logo', 'após', 'depois', 'antes', 'agora',
+            'aqui', 'ali', 'lá', 'acolá', 'perto', 'longe', 'dentro', 'fora',
+            'sobre', 'sob', 'entre', 'até', 'contra', 'perante',
+            'sorriso', 'olhar', 'suspiro', 'gesto', 'voz', 'grito', 'gemido',
+        }
         npc_appear_kw = ['apareceu', 'aproxima', 'chega', 'chegou', 'surge', 'surgiu', 'aproximou']
         if any(kw in combined_text for kw in npc_appear_kw):
             npc_name = None
             for m in re.finditer(r'([A-ZÀ-Ú][a-zà-ú]{2,})', action_text + ' ' + narration):
                 candidate = m.group(1)
+                if candidate.lower() in NPC_STOPWORDS:
+                    continue
                 if _name_matches(candidate.lower(), existing_names):
                     continue
                 npc_name = candidate
